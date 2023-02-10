@@ -1,0 +1,51 @@
+@use '../../../styles'
+
+.card
+    // min-height: 350px
+    border: 1px solid styles.$tertiary-color
+    border-radius: 4px
+    box-shadow: 2px 2px 3px 0px
+    color: styles.$secondary-color
+    padding: 20px
+    justify-content: flex-start
+    font-size: 27px
+
+    .body-container
+        height: 80%
+        margin-left: 30px
+        align-items: flex-start
+        justify-content: flex-start
+        transition: 100ms
+        @media screen and (max-width: styles.$screen-lg)
+            margin-top: 10px
+        @media screen and (max-width: styles.$screen-sm)
+            margin-left: 0px
+
+    .body-container:hover
+        color: darken(styles.$secondary-color, 15%)
+        cursor: pointer
+
+    h2
+        font-size: 1.5em
+        line-height: 1.2em
+
+    .news-img
+        width: 40%
+        @media screen and (max-width: styles.$screen-lg)
+            width: 80%
+
+    .news-img:hover
+        cursor: pointer
+
+    p
+        font-size: 0.9em
+        line-height: 1.3em
+
+@media screen and (max-width: styles.$screen-xl)
+    .card
+        font-size: 20px
+
+@media screen and (max-width: styles.$screen-lg)
+    .card
+        font-size: 16px
+        flex-direction: column

@@ -1,0 +1,13 @@
+<div class="side-nav-container lg-xl">
+    <ul>
+        <li (click)="scrollToBlog(date)" *ngFor="let date of dates">{{date.month}} - {{date.year}}</li>
+    </ul>
+</div>
+<div class="dropdown sm-md">
+    <button (click)="toggleDates()">Select Month</button>
+    <ul *ngIf="showDates">
+        <li (click)="scrollToBlog(date)" *ngFor="let date of dates" [value]="date.time">{{date.month}} - {{date.year}}</li>
+    </ul>
+</div>
+<div (click)="toggleDates()" *ngIf="showDates" class="close-dropdown">
+</div>

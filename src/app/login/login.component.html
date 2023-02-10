@@ -1,0 +1,21 @@
+<div class="login-container vertical-stack">
+    <h3 mat-dialog-title>{{newUser ? 'Sign Up' : 'Log In'}}</h3>
+    <form [formGroup]="userForm" (ngSubmit)="onLogin()">
+        <div class="vertical-stack input-container">
+            <mat-form-field appearance="fill">
+                <mat-label>Username</mat-label>
+                <input required minlength="3" matInput formControlName="username">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Password</mat-label>
+                <input required minlength="6" matInput formControlName="password" type="password">
+                <mat-hint>*username and password must be 6 or more characters</mat-hint>
+            </mat-form-field>
+            <div class="horizontal-stack">
+                <button class="btn btn-secondary" mat-dialog-close>cancel</button>
+                <button class="btn btn-default-inverse">login</button>
+            </div>
+        </div>
+    </form>
+    <button class="text-btn" (click)="toggleNewUser()">{{newUser ? 'already a member?' : 'not a member?'}}</button>
+</div>

@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="horizontal-stack area-container">
+    <div class="vertical-stack left-cards" style="row-gap: 20px">
+      <ng-container *ngFor="let area of areas; index as i">
+        <div *ngIf="i % 2 === 0" class="card" (click)="searchArea(area)">{{area}}</div>
+      </ng-container>
+    </div>
+    <div class="vertical-stack" style="row-gap: 20px">
+      <ng-container *ngFor="let area of areas; index as i">
+        <div *ngIf="i % 2 !== 0" class="card" (click)="searchArea(area)">{{area}}</div>
+      </ng-container>
+    </div>
+  </div>
+</div>

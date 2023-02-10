@@ -1,0 +1,35 @@
+@use '../../../styles'
+
+.container
+  margin-top: 40px
+
+.area-container
+  column-gap: 20px
+  align-items: flex-start
+  @media screen and (max-width: styles.$screen-md)
+    flex-direction: column
+    align-items: center
+
+.left-cards
+  margin-bottom: 20px
+  
+.card
+  border: 1px solid styles.$tertiary-color 
+  background-color: white
+  font-size: 1.7em
+  white-space: nowrap
+  width: 25vw
+  padding: 30px
+  color: styles.$secondary-color
+  cursor: pointer
+  transition: 200ms
+  text-transform: capitalize
+  @media screen and (max-width: styles.$screen-lg)
+    font-size: 1.4em
+  @media screen and (max-width: styles.$screen-md)
+    width: 50vw
+    white-space: normal
+
+.card:hover
+  background-color: styles.$tertiary-color
+  border: 1px solid white 

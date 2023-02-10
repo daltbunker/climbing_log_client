@@ -1,0 +1,18 @@
+<div class="blog-container" *ngIf="content">
+  <div class="content-container">
+    <h2>
+      {{content.title}}
+    </h2>
+    <h4>{{content.author}} &#8226; {{content.createdDate | date}}</h4>
+    <img class="header-img" [src]="content.image" alt="">
+    <p [innerHTML]="content.body"></p>
+  </div>
+  <app-comments [comments]="content.comments" [blogId]="content.id" [loggedIn]="loggedIn"></app-comments>
+  <button *ngIf="loggedIn" class="like-btn horizontal-stack" [ngClass]="likedByUser ? 'btn-disabled' : 'btn-enabled'" (click)="submitLike(content.id)">
+    <mat-icon style="margin-left: 10px" aria-hidden="false" aria-label="comment icon" fontIcon="thumb_up_alt"></mat-icon>
+    like
+  </button>
+</div>
+<div *ngIf="notFound">
+  <app-not-found></app-not-found>
+</div>

@@ -1,0 +1,11 @@
+<div class="home-container">
+    <div class="card-container">
+        <app-news-card *ngFor="let blog of blogs" [content]="blog"></app-news-card>
+    </div>
+    <div class="side-nav-container">
+        <app-side-nav (onDateSelect)="scrollToBlog($event)" [dates]="dates"></app-side-nav>
+    </div>
+    <ng-container *ngIf="loggedIn && role === 'ADMIN'">
+        <button class="float-btn" (click)="openBlogForm()">Create +</button>
+    </ng-container>
+</div>

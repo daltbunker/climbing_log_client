@@ -1,0 +1,40 @@
+<nav>
+    <ul class="lg-xl"> 
+        <li>
+            <a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+        </li>
+        <li>
+            <a routerLink="/routes" routerLinkActive="active" ariaCurrentWhenActive="page">Routes</a>
+        </li>
+        <li>
+            <a routerLink="/boulders" routerLinkActive="active" ariaCurrentWhenActive="page">Boulders</a>
+        </li>
+        <li *ngIf="loggedIn">
+            <a routerLink="/my-climbs" routerLinkActive="active" ariaCurrentWhenActive="page">My Climbs</a>
+        </li>
+    </ul>
+    <div class="sm-md menu">
+        <button mat-button [matMenuTriggerFor]="menu" class="menu-btn">
+            <mat-icon style="margin-left: 10px" aria-hidden="false" aria-label="comment icon" fontIcon="menu"></mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <div class="vertical-stack menu-link-container">
+                <a class="menu-link" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+                <a class="menu-link" routerLink="/routes" routerLinkActive="active" ariaCurrentWhenActive="page">Routes</a>
+                <a class="menu-link" routerLink="/boulders" routerLinkActive="active" ariaCurrentWhenActive="page">Boulders</a>
+                <a *ngIf="loggedIn" class="menu-link" routerLink="/my-climbs" routerLinkActive="active" ariaCurrentWhenActive="page">My Climbs</a>
+            </div>
+        </mat-menu>
+    </div> 
+    <div>
+        <a class="logo" routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page">
+            SOUL CLIMBERS OF AMERICA
+        </a>
+        <ng-container *ngIf="loggedIn; else loginButton">
+            <button class="btn-default-inverse" style="margin-right: 20px; border: 1px solid white" (click)="logout()">Logout</button>
+        </ng-container>
+        <ng-template #loginButton>
+            <button class="btn-default-inverse" style="margin-right: 20px; border: 1px solid white" (click)="openLogin()">Login</button>
+        </ng-template>
+    </div>
+</nav>

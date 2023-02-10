@@ -1,0 +1,17 @@
+<div class="my-climbs-container vertical-stack">
+  <div style="width: 80%">
+    <table *ngIf="climbKeys.length > 0; else noClimbs">
+        <tr>
+            <th *ngFor="let key of climbKeys">{{key}}</th>
+        </tr>
+        <tr *ngFor="let climb of climbs" (click)="openLogModal(climb)">
+            <td *ngFor="let key of climbKeys" class="primary-table-column">
+                {{climb[key]}}
+            </td>
+        </tr>
+    </table>
+    <ng-template #noClimbs>
+      <div style="text-align: center">You don't have any ascents</div>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+@use '../../../styles'
+
+.main-container
+  position: fixed 
+  overflow: auto
+  top: 140px
+  right: 55px
+  width: 20vw
+  height: 60vh
+  @media screen and (max-width: styles.$screen-lg)
+    position: static
+    width: 400px
+    height: auto
+    margin-top: 30px
+  @media screen and (max-width: styles.$screen-sm)
+    width: 100%
+
+  h3
+    font-size: 1.1em
+    font-weight: bold
+    margin-bottom: 4px
+
+  .comments-container
+    padding: 10px 20px
+    justify-content: flex-start
+    align-items: flex-start
+    border: 1px solid styles.$tertiary-color
+    border-radius: 2px
+
+  .comment-container
+    width: 100%
+    border-bottom: 1px solid styles.$tertiary-color
+    padding: 8px 0px
+
+  h4
+    font-weight: bold
+    margin: 0
+
+  .date 
+    font-weight: 200
+    font-size: 0.8em
+    margin-top: -5px
+
+  p
+    margin: 0 0 0 15px
+    font-size: 0.9em
+
+  .reply-container
+    width: 100%
+    margin-top: 5px
+    padding-top: 5px
+  
+  .reply-btn
+    transition: 200ms
+    column-gap: 15px
+
+  .reply-btn:hover
+    cursor: pointer
+    transform: scale(1.1)
+
+  .no-comments
+   width: 100%
+   text-align: center
+   border-bottom: 1px solid styles.$tertiary-color 
+   padding-bottom: 10px

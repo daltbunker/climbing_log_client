@@ -1,0 +1,32 @@
+  <div class="log-ascent-container vertical-stack">
+    <h3 mat-dialog-title>Log Ascent</h3>
+    <h4> - {{climbName}} - </h4>
+    <form [formGroup]="ascentForm" (ngSubmit)="onSubmit()">
+      <div class="vertical-stack">
+        <div class="vertical-stack" style="align-items: flex-start">
+          <mat-form-field appearance="fill">
+            <input matInput [matDatepicker]="picker" required formControlName="dateControl" placeholder="Choose a date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Attempts</mat-label>
+            <mat-select formControlName="attemptsControl" required>
+              <mat-option value="ONSIGHT">onsight</mat-option>
+              <mat-option value="FLASH">flash</mat-option>
+              <mat-option value="SECOND_GO">second go</mat-option>
+              <mat-option value="PLUS_3">+3 attempts</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Comment</mat-label>
+            <textarea style="height: 100px" matInput formControlName="commentControl"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="horizontal-stack">
+            <button class="btn-secondary" mat-dialog-close>cancel</button>
+            <button class="btn-default-inverse">{{formType === 'new' ? 'submit': 'save'}}</button>
+        </div>
+      </div>
+    </form>
+  </div>

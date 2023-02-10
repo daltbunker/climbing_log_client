@@ -1,0 +1,55 @@
+@use '../../styles'
+
+.blog-container
+  margin: 100px 50px //todo: make global
+  color: styles.$secondary-color
+  font-size: 18px
+  @media screen and (max-width: styles.$screen-md)
+        font-size: 14px
+        margin: 50px
+
+  .header-img
+    float: left
+    margin-right: 50px
+    width: 300px
+    @media screen and (max-width: styles.$screen-md)
+      float: none
+      margin-right: 0px
+      margin-bottom: 10px
+
+  h2
+    font-size: 2.2em
+    margin-bottom: 2px
+
+  h4
+    color: lighten(styles.$secondary-color, 15%)
+    margin-left: 4px
+  p
+    font-size: 1.2em
+    line-height: 1.5em
+    font-family: arial
+
+  .content-container
+    width: 70%
+    @media screen and (max-width: styles.$screen-lg)
+      width: 100%
+
+.like-btn
+  color: styles.$secondary-color
+  border: 1px solid styles.$tertiary-color
+  background-color: #ffffffd2
+  position: fixed
+  bottom: 30px
+  left: 40vw
+  padding: 3px 7px 3px 0
+  column-gap: 10px
+  border-radius: 2px
+  transition: 200ms
+
+.btn-enabled:hover
+  cursor: pointer
+  transform: scale(1.1)
+
+.btn-disabled
+  cursor: pointer
+  background-color: darken(styles.$tertiary-color, 10%)

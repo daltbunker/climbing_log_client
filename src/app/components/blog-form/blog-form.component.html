@@ -1,0 +1,23 @@
+<div class="top-container vertical-stack">
+  <h3 mat-dialog-title>New Blog</h3>
+  <form [formGroup]="blogForm" (ngSubmit)="submitBlog()">
+    <div class="vertical-stack" style="align-items: flex-start">
+      <div class="vertical-stack file-input-container">
+        <mat-label style="color: rgba(0,0,0,.6)">Image*</mat-label>
+        <input class="file-input" type="file" required formControlName="image" (change)="updateImage($event)">
+      </div>
+      <mat-form-field appearance="fill" style="width: 300px">
+        <mat-label>Title</mat-label>
+        <input matInput type="text"  maxlength="45" required formControlName="title" placeholder="...">
+      </mat-form-field>
+      <mat-form-field appearance="fill" style="width: 65vw">
+        <mat-label>Body</mat-label>
+        <textarea style="height: 300px" matInput required formControlName="body"></textarea>
+      </mat-form-field>
+    </div>
+    <div class="horizontal-stack" style="column-gap: 20px">
+        <button class="btn-secondary" mat-dialog-close>cancel</button>
+        <button class="btn-default-inverse">submit</button>
+    </div>
+  </form>
+</div>

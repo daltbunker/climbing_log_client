@@ -1,0 +1,33 @@
+<div class="vertical-container main-container">
+  <h3>Comments</h3>
+  <div class="vertical-stack comments-container">
+    <div *ngFor="let comment of comments" class="comment-container">
+      <h4>{{comment.username}}</h4>
+      <div class="date">{{comment.createdDate | date}}</div>
+      <p>{{comment.text}}</p>
+    </div>
+    <div *ngIf="!comments.length" class="no-comments">
+      Have any feedback?
+    </div>
+    <div class="reply-container" *ngIf="loggedIn; else loginMessage">
+      <div class="horizontal-stack reply-btn" *ngIf="!showReplyInput; else replyInput" (click)="toggleReply(true)">
+        <mat-icon aria-hidden="false" aria-label="comment icon" fontIcon="comment"></mat-icon>
+        <div>reply</div>
+      </div>
+      <ng-template #replyInput>
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="vertical-stack" style="row-gap: 10px; margin-top: 10px">
+          <mat-form-field appearance="fill" style="width: 90%">
+            <textarea style="height: 40px" matInput required formControlName="text"></textarea>
+          </mat-form-field>
+          <div class="horizontal-stack" style="column-gap: 10px">
+            <button type="button" class="btn-secondary" (click)="toggleReply(false)">cancel</button>
+            <button type="submit" class="btn-default">submit</button>
+          </div>
+        </form>
+      </ng-template>
+    </div>
+    <ng-template #loginMessage>
+      <div style="width: 100%; text-align: center; margin: 10px 0">Login to add a comment</div>
+    </ng-template>
+  </div>
+</div>

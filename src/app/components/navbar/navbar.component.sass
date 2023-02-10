@@ -1,0 +1,53 @@
+@use '../../../styles'
+
+nav
+    background-color: styles.$primary-color
+    position: fixed
+    top: 0
+    width: 100%
+    display: flex
+    justify-content: space-between
+    align-items: center
+    z-index: 10
+
+    ul
+        list-style-type: none
+        display: flex
+        flex-direction: row
+        column-gap: 50px
+
+    a
+        color: white
+        text-decoration: none
+        text-transform: uppercase
+        transition: 200ms
+
+    a:hover
+        border-bottom: 3px solid white
+
+nav .logo:hover
+    border-bottom: none
+    
+.logo
+    margin-right: 10px
+
+        
+.menu-btn
+    background-color: transparent
+    border: none
+    color: white
+    padding-top: 4px
+
+.menu-link-container
+    align-items: flex-start
+    padding-left: 10px
+
+.menu-link
+    color: styles.$secondary-color
+    text-decoration: none
+    border-bottom: 1px solid styles.$tertiary-color
+    width: 80%
+    padding: 10px 0px
+
+.menu-link:last-child
+    border-bottom: none

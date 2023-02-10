@@ -1,0 +1,24 @@
+@use '../../styles'
+  
+.my-climbs-container
+  margin-top: 100px
+
+table
+  border-spacing: 10px
+  border: 2px solid styles.$tertiary-color
+  border-radius: 4px
+  width: 100%
+  color: styles.$secondary-color
+
+th
+  text-align: left
+
+td
+  border-top: 1px solid styles.$tertiary-color
+  border-bottom: 1px solid styles.$tertiary-color
+  padding: 3px 6px
+
+tr:not(:first-child):hover
+  background-color: styles.$tertiary-color
+  cursor: pointer
+
