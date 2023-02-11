@@ -59,11 +59,9 @@ export class RstApiService {
 
   // Blog
   addBlog(blog: any): Observable<any> {
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post<any>(
       `api/blog/add?user=${this.authService.getUsername()}`,
-      blog,
-      { headers: this.contentTypeHeaders }
+      blog
     )
   }
 
