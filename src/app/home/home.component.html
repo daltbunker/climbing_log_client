@@ -2,7 +2,7 @@
     <div class="card-container">
         <app-news-card *ngFor="let blog of blogs" [content]="blog"></app-news-card>
     </div>
-    <div class="side-nav-container">
+    <div class="side-nav-container" *ngIf="blogs.length > 0">
         <app-side-nav (onDateSelect)="scrollToBlog($event)" [dates]="dates"></app-side-nav>
     </div>
     <ng-container *ngIf="loggedIn && role === 'ADMIN'">
