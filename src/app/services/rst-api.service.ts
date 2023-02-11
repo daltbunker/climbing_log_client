@@ -8,6 +8,8 @@ import { AuthService } from './auth.service';
 })
 export class RstApiService {
 
+  private contentTypeHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+
   constructor(
     private http: HttpClient,
     private authService: AuthService) { }
@@ -40,17 +42,15 @@ export class RstApiService {
 
   // Ascents
   addAscent(ascent: any, climbId: number): Observable<any> {
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post<any>(
       'api/ascents/add?climb=' + climbId + '&user=' + this.authService.getUsername(),
       ascent,
-      { headers }
+      { headers: this.contentTypeHeaders }
     )
   }
 
   updateAscent(ascent: any, id: number): Observable<any> {
-    const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this.http.put<any>('api/ascents/edit?id=' + id, ascent, { headers });
+    return this.http.put<any>('api/ascents/edit?id=' + id, ascent, { headers: this.contentTypeHeaders });
   }
 
   getUserAscents(): Observable<any> {
@@ -62,7 +62,8 @@ export class RstApiService {
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this.http.post<any>(
       `api/blog/add?user=${this.authService.getUsername()}`,
-      blog
+      blog,
+      { headers: this.contentTypeHeaders }
     )
   }
 
@@ -77,14 +78,16 @@ export class RstApiService {
   addComment(blogId: number, comment: { text: string }): Observable<any> {
     return this.http.post<any>(
       `api/blog/${blogId}/comment?user=${this.authService.getUsername()}`,
-      comment
+      comment,
+      { headers: this.contentTypeHeaders }
     )
   }
 
   addLike(blogId: number) {
     return this.http.post<any>(
       `api/blog/${blogId}/like?user=${this.authService.getUsername()}`,
-      null
+      null,
+      { headers: this.contentTypeHeaders }
     )
   }
   

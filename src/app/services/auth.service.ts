@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -8,16 +8,17 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AuthService {
 
   private loggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private contentTypeHeaders = new HttpHeaders().set('Content-Type', 'application/json');
   loggedIn$: Observable<boolean> = this.loggedIn.asObservable();
 
   constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post<any>('api/auth/login', {username, password});
+    return this.http.post<any>('api/auth/login', { username, password }, { headers: this.contentTypeHeaders });
   }
 
   signup(username: string, password: string) {
-    return this.http.post<any>('api/auth/signup', {username, password});
+    return this.http.post<any>('api/auth/signup', {username, password}, { headers: this.contentTypeHeaders });
   }
 
   logout() {
