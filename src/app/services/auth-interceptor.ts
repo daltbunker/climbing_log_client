@@ -9,7 +9,7 @@ export class AuthInterceptor implements HttpInterceptor {
   private baseUrl = environment.baseUrl;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const url = this.baseUrl + req.url;
+    const url = this.baseUrl + '/' + req.url;
     const tokenId = localStorage.getItem("token_id");
     if (tokenId) {
       const cloned = req.clone({
