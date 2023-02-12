@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/climbing_log_ui'),
+      dir: require('path').join(__dirname, './coverage/climbing-log-client'),
       subdir: '.',
       reporters: [
         { type: 'html' },
