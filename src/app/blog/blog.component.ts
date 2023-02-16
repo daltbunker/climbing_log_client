@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { LoaderService } from '../services/loader.service';
 import { RstApiService } from '../services/rst-api.service';
 
 @Component({
@@ -28,10 +29,11 @@ export class BlogComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private rstApiService: RstApiService) { }
+    private rstApiService: RstApiService,
+    private loaderService: LoaderService) { }
 
   ngOnInit(): void {
-    // this.openBlogForm(); // FOR TESTING CONVENIENCCE
+    this.loaderService.startLoading();
 
     this.authService.loggedIn$.subscribe(loggedIn => {
       this.loggedIn = loggedIn 
@@ -57,9 +59,11 @@ export class BlogComponent implements OnInit {
           if (this.loggedIn) {
             this.setLikedByUser(resp.likes);
           }
+          this.loaderService.stopLoading();
         },
         error: () => {
           this.notFound = true;
+          this.loaderService.stopLoading();
         }
       })
   }

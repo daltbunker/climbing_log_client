@@ -1,8 +1,10 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
 import { BlogFormComponent } from '../components/blog-form/blog-form.component';
 import { SplitDate } from '../models/SplitDate.model';
 import { AuthService } from '../services/auth.service';
+import { LoaderService } from '../services/loader.service';
 import { RstApiService } from '../services/rst-api.service';
 
 @Component({
@@ -16,13 +18,18 @@ export class HomeComponent implements OnInit {
   public dates: SplitDate[] = [];
   public loggedIn = false;
   public role = '';
+  public noBlogs = false;
 
   constructor(
     private rstApiService: RstApiService,
     private dialog: MatDialog,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private loaderService: LoaderService,
+    private notifierService: NotifierService
+  ) { }
 
   ngOnInit(): void {
+    this.loaderService.startLoading();
     this.authService.loggedIn$.subscribe(loggedIn => {
       const role = this.authService.getRole();
       this.role = role ? role : '';
@@ -36,6 +43,9 @@ export class HomeComponent implements OnInit {
     this.rstApiService.getAllBlogs()
       .subscribe({
         next: resp => {
+          if (resp.length < 1) {
+            this.noBlogs = true;
+          }
           resp.forEach((blog: any) => {
             blog.image = 'data:image/jpg;base64,' + blog.image;
             blog.body = blog.body.replaceAll('*NL*', '<br>') + '...';
@@ -43,6 +53,11 @@ export class HomeComponent implements OnInit {
           });
           this.blogs = resp;
           this.sortBlogsAndDates();
+          this.loaderService.stopLoading();
+        },
+        error: () => {
+          this.notifierService.notify('default', 'Failed to load blogs :(');
+          this.loaderService.startLoading();
         }
       })
   }

@@ -1,6 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
 import { AscentFormComponent } from '../components/ascent-form/ascent-form.component';
+import { LoaderService } from '../services/loader.service';
 import { RstApiService } from '../services/rst-api.service';
 
 @Component({
@@ -14,14 +16,18 @@ export class MyClimbsComponent implements OnInit {
   public climbs: any[] = [];
   public climbKeys: string[] = [];
   private dialogRef: MatDialogRef<unknown, any> | undefined;
+  public noAscents = false;
 
   constructor(
     private rstApiService: RstApiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private loaderService: LoaderService,
+    private notifierService: NotifierService
   ) { }
 
 
   ngOnInit(): void {
+    this.loaderService.startLoading();
     this.setClimbs();
     this.submitLogEmitter.subscribe(event => {
       if (event && this.dialogRef) {
@@ -37,6 +43,9 @@ export class MyClimbsComponent implements OnInit {
      this.rstApiService.getUserAscents()
       .subscribe({
         next: (resp: any[]) => {
+          if (resp.length < 1) {
+            this.noAscents = true;
+          }
           this.climbs = resp.map(ascent => {
             return {
               name: ascent.name,
@@ -48,6 +57,11 @@ export class MyClimbsComponent implements OnInit {
           })
           this.climbKeys = Object.keys(this.climbs[0]);
           this.climbKeys.pop();
+          this.loaderService.stopLoading();
+        },
+        error: () => {
+          this.notifierService.notify('deafult', 'Failed to load ascents :(')
+          this.loaderService.stopLoading();
         }
       });
   }  

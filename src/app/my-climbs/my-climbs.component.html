@@ -1,6 +1,6 @@
 <div class="my-climbs-container vertical-stack">
   <div style="width: 80%">
-    <table *ngIf="climbKeys.length > 0; else noClimbs">
+    <table *ngIf="climbKeys.length > 0" class="md-lg-xl">
         <tr>
             <th *ngFor="let key of climbKeys">{{key}}</th>
         </tr>
@@ -10,8 +10,13 @@
             </td>
         </tr>
     </table>
-    <ng-template #noClimbs>
-      <div style="text-align: center">You don't have any ascents</div>
-    </ng-template>
+    <div class="sm">
+      <div *ngFor="let climb of climbs" class="sm-result-container" (click)="openLogModal(climb)">
+          <div *ngFor="let key of climbKeys">
+              <span>{{key}}:</span> {{climb[key]}}
+          </div>
+      </div>
+    </div>
+    <div *ngIf="noAscents" style="text-align: center">You don't have any ascents</div>
   </div>
 </div>

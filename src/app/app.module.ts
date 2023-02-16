@@ -23,6 +23,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ClimbFormComponent } from './components/climb-form/climb-form.component';
 import { AscentFormComponent } from './components/ascent-form/ascent-form.component';
@@ -34,6 +35,7 @@ import { NotifierModule } from 'angular-notifier';
 import { SuggestedAreasComponent } from './components/suggested-areas/suggested-areas.component';
 import { CommentsComponent } from './components/comments/comments.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,8 @@ import { NotFoundComponent } from './not-found/not-found.component';
     BlogFormComponent,
     SuggestedAreasComponent,
     CommentsComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -67,6 +70,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
     MatNativeDateModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatProgressSpinnerModule,
     MatMenuModule,
     ReactiveFormsModule,
     MatIconModule,

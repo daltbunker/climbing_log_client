@@ -31,7 +31,7 @@
                     </ng-container>
                 </div>
             </div>
-            <table>
+            <table class="md-lg-xl">
                 <tr>
                     <th *ngFor="let key of searchResultKeys">{{key}}</th>
                 </tr>
@@ -41,6 +41,13 @@
                     </td>
                 </tr>
             </table>
+            <div class="sm">
+                <div *ngFor="let result of searchResults" class="sm-result-container" (click)="result.country ? getClimbs(result): openLogModal(result)">
+                    <div *ngFor="let key of searchResultKeys">
+                        <span>{{key}}:</span> {{result[key]}}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <ng-template #appSuggestedAreas>
