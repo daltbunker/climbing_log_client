@@ -1,7 +1,71 @@
-<div>
-  <h3>Add Climb</h3>
-  <form>
-    <label>Name</label>
-    <input />
+<div class="log-climb-container vertical-stack">
+  <h3 mat-dialog-title>Add Climb</h3>
+  <form [formGroup]="climbForm" (ngSubmit)="onSubmit()">
+    <div class="vertical-stack">
+      <div class="vertical-stack" style="align-items: flex-start">
+
+        <mat-button-toggle-group formControlName="typeControl" aria-label="Climb Type">
+          <mat-button-toggle value="route">Route</mat-button-toggle>
+          <mat-button-toggle value="boulder">Boulder</mat-button-toggle>
+        </mat-button-toggle-group>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput required formControlName="nameControl" type="text">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="!showVGrades">
+          <mat-label>Grade</mat-label>
+          <mat-select formControlName="gradeControl" required>
+            <ng-container *ngFor="let route of routes">
+              <mat-option [value]="route">{{route}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" *ngIf="showVGrades">
+            <mat-label>Grade</mat-label>
+            <mat-select formControlName="gradeControl" required>
+              <ng-container *ngFor="let boulder of boulders">
+                <mat-option [value]="boulder">{{boulder}}</mat-option>
+              </ng-container>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Country</mat-label>
+          <mat-select formControlName="countryControl" required>
+            <ng-container *ngFor="let country of countries">
+              <mat-option [value]="country">{{country}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>State</mat-label>
+          <mat-select formControlName="stateControl">
+            <ng-container *ngFor="let state of states">
+              <mat-option [value]="state">{{state}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Area</mat-label>
+          <input matInput required formControlName="areaControl" type="text">
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill">
+          <mat-label>Sector</mat-label>
+          <input matInput required formControlName="sectorControl" type="text">
+        </mat-form-field>
+        
+      </div>
+
+      <div class="horizontal-stack">
+          <button class="btn-secondary" mat-dialog-close>cancel</button>
+          <button class="btn-default-inverse">submit</button>
+      </div>
+    </div>
   </form>
 </div>

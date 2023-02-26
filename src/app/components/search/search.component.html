@@ -18,7 +18,7 @@
             <button class="btn-default">search</button>
         </div>
     </form>
-    <div class="vertical-stack" style="margin-top: 50px" *ngIf="this.searchResults.length > 0; else appSuggestedAreas">
+    <div class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;" *ngIf="this.searchResults.length > 0; else appSuggestedAreas">
         <div style="width: 80%;">
             <div class="vertical-stack" style="align-items: flex-start;">
                 <div class="breadcrumb" style="margin-left: 10px;" *ngIf="true">
@@ -53,4 +53,7 @@
     <ng-template #appSuggestedAreas>
         <app-suggested-areas [areas]="suggestedAreas" (onAreaClicked)="searchLocations($event)"></app-suggested-areas>
     </ng-template>
+    <ng-container *ngIf="loggedIn && role === 'ADMIN'">
+        <button class="float-btn" (click)="openClimbForm()">Add Climb +</button>
+    </ng-container>
 </div>

@@ -42,6 +42,14 @@ export class RstApiService {
     return this.http.get<any>(this.apiUrl + '/api/climbs/all?name=' + name)
   }
 
+  addClimb(climb: any): Observable<any> {
+    return this.http.post<any>(
+      this.apiUrl + '/api/climbs/add',
+      climb,
+      { headers: this.contentTypeHeaders }
+    )
+  }
+
   // Ascents
   addAscent(ascent: any, climbId: number): Observable<any> {
     return this.http.post<any>(

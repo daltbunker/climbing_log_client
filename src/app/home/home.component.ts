@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
         },
         error: () => {
           this.notifierService.notify('default', 'Failed to load blogs :(');
-          this.loaderService.startLoading();
+          this.loaderService.stopLoading();
         }
       })
   }

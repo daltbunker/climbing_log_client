@@ -3,8 +3,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { map, Observable, startWith } from 'rxjs';
 import { SearchModel } from 'src/app/models/Search.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { RstApiService } from 'src/app/services/rst-api.service';
 import { AscentFormComponent } from '../ascent-form/ascent-form.component';
+import { ClimbFormComponent } from '../climb-form/climb-form.component';
 
 @Component({
   selector: 'app-search',
@@ -15,7 +17,8 @@ export class SearchComponent implements OnInit {
 
   @Output() submitLogEmitter = new EventEmitter<boolean>();
   @Input() data: Array<{value: string, type: string}> = [];
-  private dialogRef: MatDialogRef<AscentFormComponent, any> | undefined;
+  private ascentDialogRef: MatDialogRef<AscentFormComponent, any> | undefined;
+  private climbDialogRef: MatDialogRef<ClimbFormComponent, any> | undefined;
   public filteredData: Observable<SearchModel[]> | undefined;
   public searchForm = new FormGroup({
     searchControl: new FormControl('')
@@ -26,13 +29,22 @@ export class SearchComponent implements OnInit {
   public suggestedAreas: string[] = [];
   public selectedArea = '';
   public selectedSector = '';
+  public loggedIn = false;
+  public role = '';
 
   constructor(
     public rstApiService: RstApiService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.loggedIn$.subscribe(loggedIn => {
+      const role = this.authService.getRole();
+      this.role = role ? role : '';
+      this.loggedIn = loggedIn 
+    })
+    this.authService.updateLoginState();
     this.setSuggestedAreas();
     this.filteredData = this.searchForm.get('searchControl')?.valueChanges.pipe(
       startWith(''),
@@ -40,8 +52,8 @@ export class SearchComponent implements OnInit {
     ); 
 
     this.submitLogEmitter.subscribe(event => {
-      if (event && this.dialogRef) {
-        this.dialogRef.close();
+      if (event && this.ascentDialogRef) {
+        this.ascentDialogRef.close();
       } else {
         console.warn('failed to close ascent form')
       }
@@ -85,7 +97,6 @@ export class SearchComponent implements OnInit {
       next: resp => {
         this.searchResults = resp.map((result: any) => {
           const { name, id, sector, area } = result;
-          console.log(result)
           const grade = this.translateGrade(result.grade);
           return {
             name,
@@ -97,7 +108,6 @@ export class SearchComponent implements OnInit {
         })
         this.searchResultKeys = Object.keys(this.searchResults[0]);
         this.searchResultKeys.pop();
-        console.log(resp, searchValue) 
       }
     });
   }
@@ -177,12 +187,20 @@ export class SearchComponent implements OnInit {
   }
 
   openLogModal(climb: any): void {
-    this.dialogRef = this.dialog.open(AscentFormComponent, {
+    this.ascentDialogRef = this.dialog.open(AscentFormComponent, {
       width: '400px',
       minHeight: '300px',
       position: {top: '10vh'},
       data: { ...climb, submitLogEmitter: this.submitLogEmitter, formType: 'new' }
     })
+  }
+
+  openClimbForm(): void {
+    this.climbDialogRef = this.dialog.open(ClimbFormComponent, {
+      width: '400px',
+      minHeight: '300px',
+      position: {top: '10vh'}
+    }) 
   }
 
 }
