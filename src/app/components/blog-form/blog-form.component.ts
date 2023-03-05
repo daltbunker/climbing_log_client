@@ -37,7 +37,7 @@ export class BlogFormComponent implements OnInit {
     // TODO: show image red if it's empty
     if (this.blogForm.valid) {
       const fd = new FormData();
-      const body = this.getFormattedBody(); 
+      const body = this.blogForm.get('body')?.value;
       const title = this.blogForm.get('title')?.value;
       if (this.image && body && title) {
         fd.append('image', this.image);
@@ -55,10 +55,5 @@ export class BlogFormComponent implements OnInit {
         });
       }
     }
-  }
-
-  getFormattedBody(): string {
-    const formattedBody = this.blogForm.get('body')?.value?.replace(/(\r\n|\n|\r)/gm, '*NL*');
-    return formattedBody ? formattedBody : '';
   }
 }

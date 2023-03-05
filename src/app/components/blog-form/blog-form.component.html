@@ -10,10 +10,23 @@
         <mat-label>Title</mat-label>
         <input matInput type="text"  maxlength="45" required formControlName="title" placeholder="...">
       </mat-form-field>
-      <mat-form-field appearance="fill" style="width: 65vw">
-        <mat-label>Body</mat-label>
-        <textarea style="height: 300px" matInput required formControlName="body"></textarea>
-      </mat-form-field>
+      <quill-editor [placeholder]="'Insert body here...'" style="height: 300px; width: 100%" formControlName="body">
+        <div quill-editor-toolbar>
+          <span class="ql-formats">
+            <button class="ql-bold" [title]="'Bold'"></button>
+            <button class="ql-italic" [title]="'Italic'"></button>
+            <button class="ql-underline" [title]="'Underline'"></button>
+            <select class="ql-align" [title]="'Aligment'">
+              <option selected></option>
+              <option value="center"></option>
+              <option value="right"></option>
+              <option value="justify"></option>
+            </select>
+            <button type="button" class="ql-header" value="1"></button>
+            <button type="button" class="ql-header" value="2"></button>
+          </span>
+        </div>
+      </quill-editor>
     </div>
     <div class="horizontal-stack" style="column-gap: 20px">
         <button class="btn-secondary" mat-dialog-close>cancel</button>

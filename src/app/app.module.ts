@@ -37,6 +37,7 @@ import { SuggestedAreasComponent } from './components/suggested-areas/suggested-
 import { CommentsComponent } from './components/comments/comments.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     ReactiveFormsModule,
     MatIconModule,
     LazyLoadImageModule,
+    QuillModule.forRoot(),
     NotifierModule.withConfig({
       position: {
         horizontal: {
