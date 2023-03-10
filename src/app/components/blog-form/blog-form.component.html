@@ -1,6 +1,6 @@
 <div class="top-container vertical-stack">
   <h3 mat-dialog-title>New Blog</h3>
-  <form [formGroup]="blogForm" enctype="multipart/form-data;charset=UTF-8" (ngSubmit)="submitBlog()">
+  <form [formGroup]="blogForm" (ngSubmit)="submitBlog()">
     <div class="vertical-stack" style="align-items: flex-start">
       <div class="vertical-stack file-input-container">
         <mat-label style="color: rgba(0,0,0,.6)">Image*</mat-label>

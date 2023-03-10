@@ -36,16 +36,15 @@ export class BlogFormComponent implements OnInit {
   submitBlog(): void {
     // TODO: show image red if it's empty
     if (this.blogForm.valid) {
-      const fd = new FormData();
-      const body = this.blogForm.get('body')?.value;
-      const title = this.blogForm.get('title')?.value;
-      if (this.image && body && title) {
-        fd.append('image', this.image);
-        fd.append('body', body);
-        fd.append('title', title);
-        this.rstApiService.addBlog(fd)
+      const blog = {
+        body: this.blogForm.get('body')?.value,
+        title: this.blogForm.get('title')?.value
+      }
+      if (blog.body && blog.title && this.image) {
+        this.rstApiService.addBlog(blog)
           .subscribe({
-            next: () => {
+            next: resp => {
+              this.saveBlogImage(this.image, resp.id);
               this.notifierService.notify('default', 'Blog Added Succesfully');
               this.dialogRef.close({event: 'success'});
             },
@@ -55,5 +54,17 @@ export class BlogFormComponent implements OnInit {
         });
       }
     }
+  }
+
+  saveBlogImage(image: any, blogId: number): void {
+    const fd = new FormData();
+    fd.append('image', image);
+    this.rstApiService.addBlogImage(fd, blogId)
+      .subscribe({
+        error: () => {
+          this.notifierService.notify('default', 'failed to save image');
+        }
+      });
+      
   }
 }

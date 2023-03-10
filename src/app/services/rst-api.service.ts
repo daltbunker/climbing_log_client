@@ -75,12 +75,23 @@ export class RstApiService {
     )
   }
 
+  addBlogImage(form: any, blogId: number): Observable<any> {
+    return this.http.post<any>(
+      this.apiUrl + `/api/blog/${blogId}/image`,
+      form
+    )
+  }
+
   getAllBlogs(): Observable<any> {
     return this.http.get<any>(this.apiUrl + '/api/blog/all');
   }
 
   getBlogById(id: number): Observable<any> {
     return this.http.get<any>(this.apiUrl + `/api/blog/${id}`)
+  }
+
+  getBlogImage(id: number): Observable<any> {
+    return this.http.get<any>(this.apiUrl + `/api/blog/image/${id}`)
   }
 
   addComment(blogId: number, comment: { text: string }): Observable<any> {
