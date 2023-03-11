@@ -45,8 +45,6 @@ export class BlogFormComponent implements OnInit {
           .subscribe({
             next: resp => {
               this.saveBlogImage(this.image, resp.id);
-              this.notifierService.notify('default', 'Blog Added Succesfully');
-              this.dialogRef.close({event: 'success'});
             },
             error: () => {
               this.notifierService.notify('default', 'failed to save blog');
@@ -61,7 +59,12 @@ export class BlogFormComponent implements OnInit {
     fd.append('image', image);
     this.rstApiService.addBlogImage(fd, blogId)
       .subscribe({
+        next: () => {
+          this.notifierService.notify('default', 'Blog Added Succesfully');
+          this.dialogRef.close({event: 'success'});
+        },
         error: () => {
+          // TODO: change form to update mode
           this.notifierService.notify('default', 'failed to save image');
         }
       });

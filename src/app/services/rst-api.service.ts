@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 })
 export class RstApiService {
 
-  private contentTypeHeaders = new HttpHeaders().set('Content-Type', 'application/json');
+  private contentTypeHeaders = new HttpHeaders().set('Content-Type', 'application/json; charset=UTF-8');
   private apiUrl = environment.apiUrl;
 
   constructor(
@@ -71,7 +71,8 @@ export class RstApiService {
   addBlog(blog: any): Observable<any> {
     return this.http.post<any>(
       this.apiUrl + `/api/blog/add?user=${this.authService.getUsername()}`,
-      blog
+      blog,
+      { headers: this.contentTypeHeaders }
     )
   }
 
