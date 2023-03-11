@@ -47,7 +47,6 @@ export class HomeComponent implements OnInit {
             this.noBlogs = true;
           }
           resp.forEach((blog: any) => {
-            blog.body = blog.body.replaceAll('*NL*', '<br>') + '...';
             this.addDate(blog.createdDate)
           });
           this.blogs = resp;

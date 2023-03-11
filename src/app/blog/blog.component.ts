@@ -54,7 +54,6 @@ export class BlogComponent implements OnInit {
       .subscribe({
         next: (resp) => {
           resp.image = 'data:image/jpg;base64,' + resp.image;
-          resp.body = resp.body.replaceAll('*NL*', '<br>');
           this.content = resp;
           if (this.loggedIn) {
             this.setLikedByUser(resp.likes);
