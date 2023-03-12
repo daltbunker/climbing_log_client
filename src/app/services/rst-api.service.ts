@@ -76,6 +76,14 @@ export class RstApiService {
     )
   }
 
+  updateBlog(blog: any, blogId: number): Observable<any> {
+    return this.http.put<any>(
+      this.apiUrl + `/api/blog/${blogId}`,
+      blog,
+      { headers: this.contentTypeHeaders }
+    )
+  }
+
   addBlogImage(form: any, blogId: number): Observable<any> {
     return this.http.post<any>(
       this.apiUrl + `/api/blog/${blogId}/image`,

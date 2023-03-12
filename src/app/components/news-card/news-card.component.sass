@@ -1,29 +1,29 @@
 @use '../../../styles'
 
+.card:hover
+    box-shadow: 3px 3px 6px 0px
+    cursor: pointer
+
 .card
-    // min-height: 350px
     border: 1px solid styles.$tertiary-color
     border-radius: 4px
-    box-shadow: 2px 2px 3px 0px
+    box-shadow: 1px 1px 2px 0px
     color: styles.$secondary-color
     padding: 20px
     justify-content: flex-start
     font-size: 27px
+    background-color: white
+    transition: 150ms
 
     .body-container
         height: 80%
         margin-left: 30px
         align-items: flex-start
         justify-content: flex-start
-        transition: 100ms
         @media screen and (max-width: styles.$screen-lg)
             margin-top: 10px
         @media screen and (max-width: styles.$screen-sm)
             margin-left: 0px
-
-    .body-container:hover
-        color: darken(styles.$secondary-color, 15%)
-        cursor: pointer
 
     h2
         font-size: 1.5em
@@ -38,14 +38,14 @@
         cursor: pointer
 
     p
-        font-size: 0.9em
+        font-size: 0.75em
         line-height: 1.3em
 
 @media screen and (max-width: styles.$screen-xl)
     .card
-        font-size: 20px
+        font-size: 23px
 
 @media screen and (max-width: styles.$screen-lg)
     .card
-        font-size: 16px
+        font-size: 20px
         flex-direction: column

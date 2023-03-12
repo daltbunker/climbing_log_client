@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AuthService } from 'src/app/services/auth.service';
 import { RstApiService } from 'src/app/services/rst-api.service';
 import { NotifierService } from 'angular-notifier';
 
@@ -21,18 +20,13 @@ export class AscentFormComponent implements OnInit {
     attemptsControl: new FormControl(''),
     commentControl: new FormControl('')
   });
-  public loggedIn = false;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private rstApiService: RstApiService,
-    private authService: AuthService,
     private notifierService: NotifierService) { }
 
   ngOnInit(): void {
-    this.authService.loggedIn$.subscribe(loggedIn => {
-      this.loggedIn = loggedIn;
-    })
     this.climbName = this.data.name;
     this.formType = this.data.formType;
     if (this.formType === 'edit') {
@@ -63,25 +57,17 @@ export class AscentFormComponent implements OnInit {
   }
 
   logAscent(ascent: any): void {
-    if (!this.loggedIn) {
-      this.notifierService.notify('default', 'Looks like you aren\'t logged in.');
-      this.data.submitLogEmitter.emit(true);
-    } else if (this.climbId) {
-      const username = this.authService.getUsername();
-      if (username) {
-        this.rstApiService.addAscent(ascent, this.climbId)
-          .subscribe({
-            next: () => {
-              this.notifierService.notify('default', 'Ascent added!');
-              this.data.submitLogEmitter.emit(true);
-            },
-            error: () => {
-              this.notifierService.notify('default', 'Sorry, something went wrong :(');
-            }
-          });
-      } else {
-        console.log('logged in, but username is empty') // TODO: move this error handling to rst-api-service
-      }
+    if (this.climbId) {
+      this.rstApiService.addAscent(ascent, this.climbId)
+        .subscribe({
+          next: () => {
+            this.notifierService.notify('default', 'Ascent added!');
+            this.data.submitLogEmitter.emit(true);
+          },
+          error: () => {
+            this.notifierService.notify('default', 'Sorry, something went wrong :(');
+          }
+        });
     }
   }
 

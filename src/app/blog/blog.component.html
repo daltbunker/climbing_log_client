@@ -3,7 +3,7 @@
     <h2>
       {{content.title}}
     </h2>
-    <h4>{{content.author}} &#8226; {{content.createdDate | date}}</h4>
+    <h4>{{content.author}} &#8226; {{content.createdDate | date}}<span (click)="editBlog()" *ngIf="loggedIn && username === content.author" class="edit-btn btn-secondary">edit</span></h4>
     <img class="header-img" [src]="content.image" alt="">
     <p [innerHTML]="content.body"></p>
   </div>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { BlogFormComponent } from '../components/blog-form/blog-form.component';
 import { AuthService } from '../services/auth.service';
 import { LoaderService } from '../services/loader.service';
 import { RstApiService } from '../services/rst-api.service';
@@ -24,18 +26,20 @@ export class BlogComponent implements OnInit {
   public image: any;
   public likedByUser = false;
   public loggedIn = false;
+  public username: string | null = null;
   public notFound = false;
 
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
     private rstApiService: RstApiService,
+    private dialog: MatDialog,
     private loaderService: LoaderService) { }
 
   ngOnInit(): void {
     this.loaderService.startLoading();
-
     this.authService.loggedIn$.subscribe(loggedIn => {
+      this.username = this.authService.getUsername();
       this.loggedIn = loggedIn 
       this.setLikedByUser(this.content ? this.content.likes : []);
     })
@@ -96,6 +100,19 @@ export class BlogComponent implements OnInit {
     likes.forEach(like => {
       if (like === username) {
         this.likedByUser = true;
+      }
+    })
+  }
+
+  editBlog(): void {
+    const dialogRef = this.dialog.open(BlogFormComponent, {
+      width: '90%',
+      minHeight: '400px',
+      data: { formType: 'edit', id: this.content?.id, title: this.content?.title, body: this.content?.body }
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result.event === 'success' && this.content) {
+        this.setBlogContent(this.content.id);
       }
     })
   }

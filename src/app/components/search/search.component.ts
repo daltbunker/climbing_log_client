@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { NotifierService } from 'angular-notifier';
 import { map, Observable, startWith } from 'rxjs';
 import { SearchModel } from 'src/app/models/Search.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -35,7 +36,8 @@ export class SearchComponent implements OnInit {
   constructor(
     public rstApiService: RstApiService,
     public dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private notifierService: NotifierService
   ) { }
 
   ngOnInit(): void {
@@ -187,12 +189,16 @@ export class SearchComponent implements OnInit {
   }
 
   openLogModal(climb: any): void {
-    this.ascentDialogRef = this.dialog.open(AscentFormComponent, {
-      width: '400px',
-      minHeight: '300px',
-      position: {top: '10vh'},
-      data: { ...climb, submitLogEmitter: this.submitLogEmitter, formType: 'new' }
-    })
+    if (this.loggedIn) {
+      this.ascentDialogRef = this.dialog.open(AscentFormComponent, {
+        width: '400px',
+        minHeight: '300px',
+        position: {top: '10vh'},
+        data: { ...climb, submitLogEmitter: this.submitLogEmitter, formType: 'new' }
+      })
+    } else {
+      this.notifierService.notify('default', 'You must be logged in to add an ascent.');
+    }
   }
 
   openClimbForm(): void {

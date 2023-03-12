@@ -1,10 +1,10 @@
 <div class="top-container vertical-stack">
-  <h3 mat-dialog-title>New Blog</h3>
+  <h3 mat-dialog-title>{{formType === 'edit' ? 'Edit' : 'New'}} Blog</h3>
   <form [formGroup]="blogForm" (ngSubmit)="submitBlog()">
     <div class="vertical-stack" style="align-items: flex-start">
       <div class="vertical-stack file-input-container">
-        <mat-label style="color: rgba(0,0,0,.6)">Image*</mat-label>
-        <input class="file-input" type="file" required formControlName="image" (change)="updateImage($event)">
+        <mat-label style="color: rgba(0,0,0,.6)">Image* {{formType === 'edit' ? '(leave empty to keep old image)' : ''}}</mat-label>
+        <input class="file-input" type="file" formControlName="image" (change)="updateImage($event)">
       </div>
       <mat-form-field appearance="fill" style="width: 300px">
         <mat-label>Title</mat-label>
@@ -30,7 +30,7 @@
     </div>
     <div class="horizontal-stack" style="column-gap: 20px">
         <button class="btn-secondary" mat-dialog-close>cancel</button>
-        <button class="btn-default-inverse">submit</button>
+        <button class="btn-default-inverse">{{formType === 'edit' ? 'save' : 'submit'}}</button>
     </div>
   </form>
 </div>
