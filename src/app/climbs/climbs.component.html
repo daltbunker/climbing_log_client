@@ -1,3 +1,17 @@
 <div class="climbs-container">
-  <app-search></app-search>
+  <app-search (onSearch)="onSearch($event)" (updateBreadcrumbs)="updateBreadcrumbs($event)"></app-search>
+  <div class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;">
+    <div style="width: 80%;">
+      <div class="vertical-stack" style="align-items: flex-start;">
+            <div class="breadcrumb" style="margin-left: 10px;" *ngIf="true">
+                <span *ngFor="let crumb of breadcrumbs; last as isLast" (click)="onBreadcrumbClick(crumb.id)">{{crumb.name}} {{isLast ? '' : '>'}} </span>
+            </div>
+        </div>
+      <app-climb-table [headers]="['name']" [data]="areaResults" (tableEvent)="onTableEvent($event)"></app-climb-table>
+      <app-climb-table [headers]="['name', 'grade']" [data]="climbResults" (tableEvent)="onTableEvent($event)"></app-climb-table>
+    </div>
+  </div>
+  <ng-container *ngIf="loggedIn && role === 'ADMIN'">
+    <button class="float-btn" (click)="openClimbForm()">Add Climb +</button>
+  </ng-container>
 </div>

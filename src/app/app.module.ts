@@ -37,6 +37,7 @@ import { CommentsComponent } from './components/comments/comments.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { QuillModule } from 'ngx-quill';
+import { ClimbTableComponent } from './components/climb-table/climb-table.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { QuillModule } from 'ngx-quill';
     SuggestedAreasComponent,
     CommentsComponent,
     NotFoundComponent,
-    LoaderComponent
+    LoaderComponent,
+    ClimbTableComponent
   ],
   imports: [
     BrowserModule,

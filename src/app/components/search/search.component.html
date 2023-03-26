@@ -20,33 +20,4 @@
             </div>
         </div>
     </form>
-    <div class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;" *ngIf="this.areaResults.length > 0 || this.climbResults.length > 0; else appSuggestedAreas">
-        <div style="width: 80%;">
-            <div class="vertical-stack" style="align-items: flex-start;">
-                <div class="breadcrumb" style="margin-left: 10px;" *ngIf="true">
-                    <span *ngFor="let area of areaPath; last as isLast" (click)="onBreadcrumbClick(area.id)">{{area.name}} {{isLast ? '' : '>'}} </span>
-                </div>
-            </div>
-            <table class="md-lg-xl" *ngIf="tableDisplay === 'climbs'">
-                <th>Name</th>
-                <th>Grade</th>
-                <tr *ngFor="let climb of climbResults" (click)="openLogModal(climb)">
-                  <td class="primary-table-column">{{climb.name}}</td>  
-                  <td class="primary-table-column">{{climb.grade}}</td>  
-                </tr>
-            </table>
-            <table class="md-lg-xl" *ngIf="tableDisplay === 'areas'">
-                <th>Area</th>
-                <tr *ngFor="let area of areaResults">
-                    <td class="primary-table-column" (click)="onAreaClick(area)">{{area.name}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <ng-template #appSuggestedAreas>
-        <app-suggested-areas [areas]="suggestedAreas" (onAreaClicked)="searchAreas($event)"></app-suggested-areas>
-    </ng-template>
-    <ng-container *ngIf="loggedIn && role === 'ADMIN'">
-        <button class="float-btn" (click)="openClimbForm()">Add Climb +</button>
-    </ng-container>
 </div>

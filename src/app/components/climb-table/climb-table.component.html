@@ -1,0 +1,10 @@
+<div *ngIf="data.length > 0">
+  <table>
+      <th *ngFor="let header of headers" >{{header}}</th>
+      <tr *ngFor="let row of data" (click)="onRowClick(row)">
+          <td *ngFor="let header of headers" class="primary-table-column" >
+            {{row[header]}}
+          </td>
+      </tr>
+    </table>
+</div>
