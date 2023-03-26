@@ -36,35 +36,51 @@
           <mat-label>Country</mat-label>
           <mat-select formControlName="countryControl" required>
             <ng-container *ngFor="let country of countries">
-              <mat-option [value]="country">{{country}}</mat-option>
+              <mat-option [value]="country">{{country.name}}</mat-option>
             </ng-container>
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
-          <mat-label>State</mat-label>
-          <mat-select formControlName="stateControl">
-            <ng-container *ngFor="let state of states">
-              <mat-option [value]="state">{{state}}</mat-option>
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
+        <div class="path">
+          <span *ngFor="let area of path; last as isLast">{{area.name}} {{isLast ? '' : '>'}} </span>
+        </div>
 
-        <mat-form-field appearance="fill">
-          <mat-label>Area</mat-label>
-          <input matInput required formControlName="areaControl" type="text">
-        </mat-form-field>
+        <div style="position: relative;">
+          <mat-form-field appearance="fill">
+            <mat-label>Area</mat-label>
+            <input type="text"
+                #area
+                placeholder="Area"
+                aria-label="Number"
+                matInput
+                formControlName="areaControl"
+                [matAutocomplete]="auto">
+            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"> 
+                <mat-option *ngFor="let area of areaResults" style="font-size: 10px;" [value]="area.value" (click)="setPath(area.path)">
+                    {{area.name}} 
+                    <span style="color: #adadad">{{area.pathForDisplay}}</span>
+                </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <div *ngIf="loadingArea" class="area-loader">
+            <mat-spinner style="transform: scale(0.2)"></mat-spinner>
+          </div>
+        </div>
         
-        <mat-form-field appearance="fill">
-          <mat-label>Sector</mat-label>
-          <input matInput required formControlName="sectorControl" type="text">
-        </mat-form-field>
         
+        <div class="horizontal-stack" style="width: 100%;">
+          <button (click)="deleteArea()" type="button" class="btn-secondary" style="width: 30px; margin-right: 10px;">-</button>
+          <button (click)="addArea()" type="button" class="btn-secondary" style="width: 30px; margin-left: 10px;">+</button>
+        </div>
+        
+        <div class="form-tip">
+          *add or remove sub areas.
+        </div>
       </div>
 
       <div class="horizontal-stack">
-          <button class="btn-secondary" mat-dialog-close>cancel</button>
-          <button class="btn-default-inverse">submit</button>
+          <button class="btn-secondary btn-space" mat-dialog-close>cancel</button>
+          <button class="btn-default-inverse btn-space">submit</button>
       </div>
     </div>
   </form>

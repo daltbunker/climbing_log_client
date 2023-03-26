@@ -2,8 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
-import { map, Observable, startWith } from 'rxjs';
-import { SearchModel } from 'src/app/models/Search.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { RstApiService } from 'src/app/services/rst-api.service';
 import { AscentFormComponent } from '../ascent-form/ascent-form.component';
@@ -17,21 +15,22 @@ import { ClimbFormComponent } from '../climb-form/climb-form.component';
 export class SearchComponent implements OnInit {
 
   @Output() submitLogEmitter = new EventEmitter<boolean>();
-  @Input() data: Array<{value: string, type: string}> = [];
-  private ascentDialogRef: MatDialogRef<AscentFormComponent, any> | undefined;
-  private climbDialogRef: MatDialogRef<ClimbFormComponent, any> | undefined;
-  public filteredData: Observable<SearchModel[]> | undefined;
-  public searchForm = new FormGroup({
-    searchControl: new FormControl('')
-  }) 
-  public searchResults: Array<any> = [];
-  public searchResultKeys: Array<string> = [];
-  private searchType = '';
-  public suggestedAreas: string[] = [];
-  public selectedArea = '';
-  public selectedSector = '';
   public loggedIn = false;
   public role = '';
+  public dropdownResults: Array<any> = [];
+  public areaResults: Array<any> = [];
+  public climbResults: Array<any> = [];
+  public suggestedAreas: string[] = [];
+  public areaPath: any[] = []; // breadcrumbs
+  public tableDisplay = '';
+  private ascentDialogRef: MatDialogRef<AscentFormComponent, any> | undefined;
+  private climbDialogRef: MatDialogRef<ClimbFormComponent, any> | undefined;
+  private searchAreaTimeout: NodeJS.Timeout | undefined;
+  public loadingAreas = false;
+  public searchForm = new FormGroup({
+    searchControl: new FormControl('')
+  })
+  //TODO: add loader for table
 
   constructor(
     public rstApiService: RstApiService,
@@ -48,126 +47,156 @@ export class SearchComponent implements OnInit {
     })
     this.authService.updateLoginState();
     this.setSuggestedAreas();
-    this.filteredData = this.searchForm.get('searchControl')?.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '')),
-    ); 
+
+    this.searchForm.valueChanges.subscribe(event => {
+      if (event.searchControl) {
+        this.searchAreas(event.searchControl);
+      }
+    });
 
     this.submitLogEmitter.subscribe(event => {
       if (event && this.ascentDialogRef) {
         this.ascentDialogRef.close();
       } else {
-        console.warn('failed to close ascent form')
+        console.warn('failed to close ascent form');
       }
     });
   }
 
-  private _filter(value: string): {value: string, type: string}[] {
-    const filterValue = value.toLowerCase();
-    return this.data.filter(d => d.value.toLowerCase().includes(filterValue));
-  }
-
-  setSuggestedAreas(): void {
-    for (let i = 0; i < this.data.length; i++) {
-      if (this.data[i].type === 'area') {
-        this.suggestedAreas.push(this.data[i].value);
-      }
-      if (this.suggestedAreas.length === 6) {
-        break;
-      }
-    }
-  }
-
-  onSearch(): void {
-    if (this.searchForm.value.searchControl) {
-      const searchValue = this.searchForm.value.searchControl;
-      if (this.searchType === 'climb') {
-        this.searchClimbs(searchValue)
-      } else {
-        this.searchLocations(searchValue)
-      }
-    } else {
-      // focus search box
-    }
-  }
-
-  searchClimbs(searchValue: string) {
-    this.selectedArea = '';
-    this.selectedSector = '';
-    this.rstApiService.getClimbsByName(searchValue)
-    .subscribe({
-      next: resp => {
-        this.searchResults = resp.map((result: any) => {
-          const { name, id, sector, area } = result;
-          const grade = this.translateGrade(result.grade);
-          return {
-            name,
-            grade,
-            sector,
-            area,
-            id
-          }
-        })
-        this.searchResultKeys = Object.keys(this.searchResults[0]);
-        this.searchResultKeys.pop();
-      }
-    });
-  }
-
-  searchLocations(searchValue: any) {
-    this.selectedArea = this.searchType !== 'sector' ? searchValue : '';
-    this.selectedSector = '';
-    this.rstApiService.getLocationsByParam(searchValue)
-    .subscribe({
-      next: resp => {
-        this.searchResults = resp.map((result: any) => {
-          const { id, country, state, sector, area } = result;
-          return {
-            country,
-            state,
-            sector,
-            area,
-            id
-          }
-        })
-        if (this.searchType === 'sector') {
-          this.selectedArea = this.searchResults[0]?.area;
+  onSearchEnter(): void {
+    const query = this.searchForm.controls.searchControl.value;
+    if (this.dropdownResults.length > 0 && query) {
+      clearTimeout(this.searchAreaTimeout);
+      this.loadingAreas = false;
+      this.dropdownResults.forEach(result => {
+        if (result.name === query) {
+          this.onAreaClick(result);
         }
-        this.searchResultKeys = Object.keys(this.searchResults[0]);
-        this.searchResultKeys.pop();
+      });
+    }
+  }
+
+  onAreaClick(area: any): void {
+    if (area.climbCount > 0) {
+      this.getClimbs(area.id, area.name);
+    } else {
+      this.searchChildren(area.id, area.name);
+    }
+  }
+
+  searchAreas(query: string): void {
+    this.loadingAreas = true;
+    if (this.searchAreaTimeout) {
+      clearTimeout(this.searchAreaTimeout);
+    }
+    this.searchAreaTimeout = setTimeout(() => {
+      this.rstApiService.getAllAreas(query).subscribe({
+        next: (resp) => {
+          if (resp.length === 0) {
+            this.notifierService.notify('default', `we didn\'t find any results similar to "${query}"`)
+          }
+          this.loadingAreas = false;
+          this.dropdownResults = resp.map((area: any) => {
+            const path = [...area.path]; // not a deep clone
+            path.pop();
+            return {
+              ...area,
+              pathForDisplay: path.map((a: any) => a.name).join(' > ')
+            }
+          });
+        },
+        error: () => {
+          this.loadingAreas = false;
+          this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
+        }
+      })
+    }, 1000)
+  }
+
+  onDropdownSelect(area: any): void {
+    this.areaPath = area.path;
+    this.loadingAreas = false;
+    clearTimeout(this.searchAreaTimeout);
+    if (area.climbCount > 0) {
+      this.getClimbs(area.id);
+    } else {
+      this.searchChildren(area.id);
+    }
+  }
+
+  searchChildren(id: number, name?: string): void {
+    this.rstApiService.getAllAreaChildren(id).subscribe({
+      next: (resp) => {
+        if (resp.length === 0) {
+          this.notifierService.notify('default', 'looks like this area doesn\'t have any climbs yet')
+        } else {
+          if (name) {
+            this.areaPath.push({ id, name });
+          }
+          this.tableDisplay = 'areas';
+          this.areaResults = resp;
+        }
+      },
+      error: () => {
+       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
       }
     })
   }
 
-  onBreadcrumbClick(searchType: string, searchValue: string): void {
-    this.setSearchType(searchType);
-    this.searchLocations(searchValue);
+  setAreaPath(area: any): void {
+    const areas = [...area.path.split(/\s*>\s*/), area.name];
+    const areaIds = area.pathIds.split(',');
+    this.areaPath = areas.map((areaName: string, i: number) => {
+      return {
+        name: areaName,
+        id: areaIds[i]
+      }
+    });
   }
 
-  getClimbs(location: any): void {
-    this.selectedArea = location.area;
-    this.selectedSector = location.sector;
-    this.rstApiService.getClimbsByLocation(location.id)
-      .subscribe({
-        next: resp => {
-          this.searchResults = resp.map((result: { name: string, grade: string, sector: string, area: string, id: number }) => {
-            const grade = this.translateGrade(result.grade)
+  onBreadcrumbClick(id: number): void {
+    this.searchChildren(id);
+    while(this.areaPath[this.areaPath.length -1].id !== id) {
+      this.areaPath.pop();
+    }
+  }
+
+  getClimbs(id: number, name?: string): void {
+    this.rstApiService.getClimbsByArea(id).subscribe({
+      next: resp => {
+        if (resp.length === 0) {
+          this.notifierService.notify('default', 'looks like this area doesn\'t have any climbs yet')
+        } else {
+          if (name) {
+            this.areaPath.push({ id, name });
+          }
+          this.tableDisplay = 'climbs';
+          this.climbResults = resp.map((result: any) => {
+            const { name, id } = result;
+            const grade = this.translateGrade(result.grade);
             return {
-              name: result.name,
+              name,
               grade,
-              sector: result.sector,
-              area: result.area,
-              climbId: result.id
+              id
             }
-          })
-          this.searchResultKeys = Object.keys(this.searchResults[0]);
-          this.searchResultKeys.pop();
+          });
         }
-      })
+      },
+      error: () => {
+       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
+      }
+    })
   }
 
-  setSearchType(type: string): void {
-    this.searchType = type;
+  setSuggestedAreas(): void {
+    // for (let i = 0; i < this.dropdownResults.length; i++) {
+    //   if (this.dropdownResults[i].type === 'area') {
+    //     this.suggestedAreas.push(this.dropdownResults[i].value);
+    //   }
+    //   if (this.suggestedAreas.length === 6) {
+    //     break;
+    //   }
+    // }
   }
 
   translateGrade(grade: string): string { // TODO: make this global

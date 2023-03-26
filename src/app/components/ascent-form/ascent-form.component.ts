@@ -11,10 +11,6 @@ import { NotifierService } from 'angular-notifier';
 })
 export class AscentFormComponent implements OnInit {
 
-  private climbId: number | undefined;
-  private ascentId: number | undefined;
-  public climbName: string | undefined;
-  public formType: string | undefined;
   public ascentForm = new FormGroup({
     dateControl: new FormControl(new Date()),
     attemptsControl: new FormControl(''),
@@ -27,17 +23,12 @@ export class AscentFormComponent implements OnInit {
     private notifierService: NotifierService) { }
 
   ngOnInit(): void {
-    this.climbName = this.data.name;
-    this.formType = this.data.formType;
-    if (this.formType === 'edit') {
-      this.ascentId = this.data.ascentId;
+    if (this.data.formType === 'edit') {
       this.ascentForm.setValue({
         dateControl: new Date(this.data.date),
         attemptsControl: this.mapAttempt(this.data.attempts),
         commentControl: this.data.comment
       });
-    } else {
-      this.climbId= this.data.climbId;
     }
   }
 
@@ -48,7 +39,7 @@ export class AscentFormComponent implements OnInit {
         date: this.ascentForm.value.dateControl,
         comment: this.ascentForm.value.commentControl,
       }
-      if (this.formType === 'edit') {
+      if (this.data.formType === 'edit') {
         this.saveAscent(ascent);
       } else {
         this.logAscent(ascent);
@@ -57,8 +48,8 @@ export class AscentFormComponent implements OnInit {
   }
 
   logAscent(ascent: any): void {
-    if (this.climbId) {
-      this.rstApiService.addAscent(ascent, this.climbId)
+    if (this.data.id) {
+      this.rstApiService.addAscent(ascent, this.data.id)
         .subscribe({
           next: () => {
             this.notifierService.notify('default', 'Ascent added!');
@@ -72,8 +63,8 @@ export class AscentFormComponent implements OnInit {
   }
 
   saveAscent(ascent: any): void {
-    if (this.ascentId) {
-      this.rstApiService.updateAscent(ascent, this.ascentId)
+    if (this.data.ascentId) {
+      this.rstApiService.updateAscent(ascent, this.data.ascentId)
         .subscribe({
           next: () => {
             this.notifierService.notify('default', 'Ascent updated!');

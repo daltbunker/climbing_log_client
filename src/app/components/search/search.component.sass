@@ -15,9 +15,13 @@ td
     border-bottom: 1px solid styles.$tertiary-color
     padding: 3px 6px
 
-tr:not(:first-child):hover
-    background-color: white
+tr:hover
     cursor: pointer
+
+.area-loader
+    position: absolute
+    top: -24px
+    right: 248px
 
 .search-bar
     width: 40%
@@ -26,12 +30,3 @@ tr:not(:first-child):hover
 
 .primary-table-column  
     white-space: nowrap
-
-.sm-result-container
-    border: 1px solid styles.$tertiary-color
-    color: styles.$secondary-color
-    padding: 10px
-    margin-bottom: 10px
-
-    span
-        font-weight: bold

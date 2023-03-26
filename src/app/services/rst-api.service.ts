@@ -16,35 +16,35 @@ export class RstApiService {
     private http: HttpClient,
     private authService: AuthService) { }
 
-  // Locations
-  getAllLocations(climbType: string): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/locations/all?type=' + climbType);
+  // Areas
+  getAllAreas(query: string, areaId?: number): Observable<any> {
+    return this.http.get<any>(this.apiUrl + `/api/area?query=${query}&area=${areaId || ''}`);
   }
 
-  getLocationById(id: string): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/locations?id=')
+  getCountries(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/api/area/country');
   }
-
-  getLocationsByParam(name: string): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/locations/search?name=' + name);
+  
+  getAllAreaChildren(id: number): Observable<any> {
+    return this.http.get<any>(this.apiUrl + `/api/area/${id}/children`);
   }
-
   // Climbs
   getAllClimbs(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs/all'); 
+    return this.http.get<any>(this.apiUrl + '/api/climbs'); 
   }
 
-  getClimbsByLocation(id: number): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs/all?location_id=' + id);
+  // TODO join this request with the one below and the one above
+  getClimbsByArea(id: number): Observable<any> {
+    return this.http.get<any>(this.apiUrl + '/api/climbs?area_id=' + id);
   } 
 
   getClimbsByName(name: string): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs/all?name=' + name)
+    return this.http.get<any>(this.apiUrl + '/api/climbs?name=' + name)
   }
 
   addClimb(climb: any): Observable<any> {
     return this.http.post<any>(
-      this.apiUrl + '/api/climbs/add',
+      this.apiUrl + '/api/climbs',
       climb,
       { headers: this.contentTypeHeaders }
     )
@@ -53,24 +53,27 @@ export class RstApiService {
   // Ascents
   addAscent(ascent: any, climbId: number): Observable<any> {
     return this.http.post<any>(
-      this.apiUrl + '/api/ascents/add?climb=' + climbId + '&user=' + this.authService.getUsername(),
+      this.apiUrl + '/api/ascents?climb=' + climbId + '&user=' + this.authService.getUsername(),
       ascent,
       { headers: this.contentTypeHeaders }
     )
   }
 
   updateAscent(ascent: any, id: number): Observable<any> {
-    return this.http.put<any>(this.apiUrl + '/api/ascents/edit?id=' + id, ascent, { headers: this.contentTypeHeaders });
+    return this.http.put<any>(
+      this.apiUrl + `/api/ascents/${id}`,
+      ascent,
+      { headers: this.contentTypeHeaders });
   }
 
   getUserAscents(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/ascents/all?user=' + this.authService.getUsername());
+    return this.http.get<any>(this.apiUrl + '/api/ascents?user=' + this.authService.getUsername());
   }
 
   // Blog
   addBlog(blog: any): Observable<any> {
     return this.http.post<any>(
-      this.apiUrl + `/api/blog/add?user=${this.authService.getUsername()}`,
+      this.apiUrl + `/api/blog?user=${this.authService.getUsername()}`,
       blog,
       { headers: this.contentTypeHeaders }
     )
@@ -92,7 +95,7 @@ export class RstApiService {
   }
 
   getAllBlogs(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/blog/all');
+    return this.http.get<any>(this.apiUrl + '/api/blog');
   }
 
   getBlogById(id: number): Observable<any> {

@@ -1,6 +1,6 @@
   <div class="log-ascent-container vertical-stack">
     <h3 mat-dialog-title>Log Ascent</h3>
-    <h4> - {{climbName}} - </h4>
+    <h4> - {{data.name}} - </h4>
     <form [formGroup]="ascentForm" (ngSubmit)="onSubmit()">
       <div class="vertical-stack">
         <div class="vertical-stack" style="align-items: flex-start">
@@ -25,7 +25,7 @@
         </div>
         <div class="horizontal-stack">
             <button class="btn-secondary" mat-dialog-close>cancel</button>
-            <button class="btn-default-inverse">{{formType === 'new' ? 'submit': 'save'}}</button>
+            <button class="btn-default-inverse">{{data.formType === 'new' ? 'submit': 'save'}}</button>
         </div>
       </div>
     </form>

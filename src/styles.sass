@@ -10,7 +10,7 @@ $screen-sm: 576px
 $screen-md: 768px
 $screen-lg: 992px
 $screen-xl: 1200px
-    
+
 body
     margin: 0
     padding: 0
@@ -33,7 +33,7 @@ body
 
 .btn-default-inverse
     background-color: $primary-color
-    border: 1px solid $primary-color 
+    border: 1px solid $primary-color
     border-radius: 2px
     padding: 6px 4px
     color: white
@@ -73,6 +73,12 @@ body
     justify-content: center
     align-items: center
 
+.form-tip
+    color: $secondary-color
+    font-size: 10px
+    margin-top: 8px
+    line-height: 13px
+
 .breadcrumb
     color: $secondary-color
     font-size: 12px
@@ -80,7 +86,7 @@ body
     span:hover
         cursor: pointer
         border-bottom: 1px solid $tertiary-color
-    
+
 .float-btn
     position: sticky
     bottom: 30px
@@ -109,6 +115,9 @@ body
 .ql-container
     height: 80%
 
+.cdk-overlay-container
+    z-index: 1
+
 @media screen and (max-width: $screen-md)
     .lg-xl
         display: none !important
@@ -123,7 +132,7 @@ body
 .sm-md
     display: none
     @media screen and (max-width: $screen-md)
-            display: block
+        display: block
 .sm
     display: none
     @media screen and (max-width: $screen-sm)

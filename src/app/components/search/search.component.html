@@ -1,7 +1,7 @@
 <div>
-    <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-        <div class="vertical-stack">
-            <mat-form-field class="search-bar" appearance="fill">
+    <form [formGroup]="searchForm">
+        <div class="vertical-stack" style="position: relative;">
+            <mat-form-field (keydown.enter)="onSearchEnter()"  class="search-bar" appearance="fill">
                 <mat-label>Search</mat-label>
                 <input type="text"
                     placeholder="Search for sectors, areas, or climbs"
@@ -10,48 +10,41 @@
                     formControlName="searchControl"
                     [matAutocomplete]="auto">
                 <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"> 
-                    <mat-option *ngFor="let d of filteredData | async" [value]="d.value" (click)="setSearchType(d.type)">
-                        {{d.value}} <span style="color: #adadad">{{d.type}}</span>
+                    <mat-option *ngFor="let result of dropdownResults" [value]="result.name" (click)="onDropdownSelect(result)">
+                        {{result.name}} <span style="color: #adadad">{{result.pathForDisplay}}</span>
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button class="btn-default">search</button>
+            <div *ngIf="loadingAreas" class="area-loader">
+                <mat-spinner style="transform: scale(0.2)"></mat-spinner>
+            </div>
         </div>
     </form>
-    <div class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;" *ngIf="this.searchResults.length > 0; else appSuggestedAreas">
+    <div class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;" *ngIf="this.areaResults.length > 0 || this.climbResults.length > 0; else appSuggestedAreas">
         <div style="width: 80%;">
             <div class="vertical-stack" style="align-items: flex-start;">
                 <div class="breadcrumb" style="margin-left: 10px;" *ngIf="true">
-                    <ng-container *ngIf="selectedArea">
-                        <span (click)="onBreadcrumbClick('area', selectedArea)">{{selectedArea}}</span>
-                        <ng-container *ngIf="selectedSector">
-                            >
-                            <span *ngIf="selectedSector" (click)="onBreadcrumbClick('sector', selectedSector)">{{selectedSector}}</span>
-                        </ng-container>
-                    </ng-container>
+                    <span *ngFor="let area of areaPath; last as isLast" (click)="onBreadcrumbClick(area.id)">{{area.name}} {{isLast ? '' : '>'}} </span>
                 </div>
             </div>
-            <table class="md-lg-xl">
-                <tr>
-                    <th *ngFor="let key of searchResultKeys">{{key}}</th>
-                </tr>
-                <tr *ngFor="let result of searchResults" (click)="result.country ? getClimbs(result): openLogModal(result)">
-                    <td *ngFor="let key of searchResultKeys" class="primary-table-column">
-                        {{result[key]}}
-                    </td>
+            <table class="md-lg-xl" *ngIf="tableDisplay === 'climbs'">
+                <th>Name</th>
+                <th>Grade</th>
+                <tr *ngFor="let climb of climbResults" (click)="openLogModal(climb)">
+                  <td class="primary-table-column">{{climb.name}}</td>  
+                  <td class="primary-table-column">{{climb.grade}}</td>  
                 </tr>
             </table>
-            <div class="sm">
-                <div *ngFor="let result of searchResults" class="sm-result-container" (click)="result.country ? getClimbs(result): openLogModal(result)">
-                    <div *ngFor="let key of searchResultKeys">
-                        <span>{{key}}:</span> {{result[key]}}
-                    </div>
-                </div>
-            </div>
+            <table class="md-lg-xl" *ngIf="tableDisplay === 'areas'">
+                <th>Area</th>
+                <tr *ngFor="let area of areaResults">
+                    <td class="primary-table-column" (click)="onAreaClick(area)">{{area.name}}</td>
+                </tr>
+            </table>
         </div>
     </div>
     <ng-template #appSuggestedAreas>
-        <app-suggested-areas [areas]="suggestedAreas" (onAreaClicked)="searchLocations($event)"></app-suggested-areas>
+        <app-suggested-areas [areas]="suggestedAreas" (onAreaClicked)="searchAreas($event)"></app-suggested-areas>
     </ng-template>
     <ng-container *ngIf="loggedIn && role === 'ADMIN'">
         <button class="float-btn" (click)="openClimbForm()">Add Climb +</button>
