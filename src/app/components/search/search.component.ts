@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
+import { forkJoin } from 'rxjs';
 import { RstApiService } from 'src/app/services/rst-api.service';
 
 @Component({
@@ -13,12 +14,14 @@ export class SearchComponent implements OnInit {
 
   @Output() onSearch = new EventEmitter<any>();
   @Output() updateBreadcrumbs= new EventEmitter<{ action: string, value: any }>();
+
   public dropdownResults: Array<any> = [];
-  private searchAreaTimeout: NodeJS.Timeout | undefined;
-  public loadingAreas = false;
+  public loading = false;
   public searchForm = new FormGroup({
     searchControl: new FormControl('')
   });
+
+  private searchAreaTimeout: NodeJS.Timeout | undefined;
 
   constructor(
     public rstApiService: RstApiService,
@@ -38,9 +41,9 @@ export class SearchComponent implements OnInit {
     const query = this.searchForm.controls.searchControl.value;
     if (this.dropdownResults.length > 0 && query) {
       clearTimeout(this.searchAreaTimeout);
-      this.loadingAreas = false;
+      this.loading = false;
       this.dropdownResults.forEach(result => {
-        if (result.name === query) {
+        if (result === query || result.name === query) {
           this.updateBreadcrumbs.emit({action: 'update', value: result.path});
           this.onSearch.emit({ value: result });
         }
@@ -49,38 +52,46 @@ export class SearchComponent implements OnInit {
   }
 
   searchAreas(query: string): void {
-    this.loadingAreas = true;
+    this.loading = true;
     if (this.searchAreaTimeout) {
       clearTimeout(this.searchAreaTimeout);
     }
     this.searchAreaTimeout = setTimeout(() => {
-      this.rstApiService.getAllAreas(query).subscribe({
-        next: (resp) => {
-          if (resp.length === 0) {
+      forkJoin({
+        areas: this.rstApiService.getAllAreas(query),
+        climbs: this.rstApiService.getClimbNames(query)
+      }).subscribe({
+        next: (responses) => {
+          this.loading = false;
+          const { areas, climbs } = responses;
+          if (areas.length === 0 && climbs.length === 0) {
             this.notifierService.notify('default', `we didn\'t find any results similar to "${query}"`)
           }
-          this.loadingAreas = false;
-          this.dropdownResults = resp.map((area: any) => {
+          this.dropdownResults = [...climbs, ...areas.map((area: any) => {
             const path = [...area.path]; // not a deep clone
             path.pop();
             return {
               ...area,
               pathForDisplay: path.map((a: any) => a.name).join(' > ')
-            }
-          });
+            } 
+          })]
         },
         error: () => {
-          this.loadingAreas = false;
+          this.loading = false;
           this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
         }
       })
     }, 1000)
   }
 
-  onDropdownSelect(area: any): void {
-    this.updateBreadcrumbs.emit({action: 'update', value: area.path})
-    this.loadingAreas = false;
+  onDropdownSelect(result: any): void {
+    if (result.name) {
+      this.updateBreadcrumbs.emit({action: 'update', value: result.path})
+      this.onSearch.emit({ value: result });
+    } else {
+      this.onSearch.emit({ value: result });
+    }
+    this.loading = false;
     clearTimeout(this.searchAreaTimeout);
-    this.onSearch.emit({ value: area });
   }
 }

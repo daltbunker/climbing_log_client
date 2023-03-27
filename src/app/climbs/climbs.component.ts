@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
+import { forkJoin } from 'rxjs';
 import { AscentFormComponent } from '../components/ascent-form/ascent-form.component';
 import { ClimbFormComponent } from '../components/climb-form/climb-form.component';
 import { AuthService } from '../services/auth.service';
@@ -52,8 +53,13 @@ export class ClimbsComponent implements OnInit {
   }
 
   onSearch(event: { value :any }): void {
-    if (event.value.climbCount > 0) {
-      this.getClimbs(event.value.id)
+    if (typeof event.value === 'string') {
+      this.getClimbsByName(event.value);
+    } else if (event.value.climbCount > 0 && event.value.childrenCount > 0) {
+      this.getClimbsAndAreas(event.value.id); 
+    }
+    else if (event.value.climbCount > 0) {
+      this.getClimbByArea(event.value.id)
     } else {
       this.searchChildren(event.value.id);
     }
@@ -63,8 +69,10 @@ export class ClimbsComponent implements OnInit {
     if (event.type === 'climb') {
       this.openLogModal(event.climb);
     } else if (event.type === 'area') {
-      if (event.area.climbCount > 0) {
-        this.getClimbs(event.area.id, event.area.name);
+      if (event.area.climbCount > 0 && event.area.childrenCount > 0) {
+        this.getClimbsAndAreas(event.area.id, event.area.name);
+      } else if (event.area.climbCount > 0) {
+        this.getClimbByArea(event.area.id, event.area.name);
       } else {
         this.searchChildren(event.area.id, event.area.name);
       }
@@ -98,23 +106,23 @@ export class ClimbsComponent implements OnInit {
     })
   }
 
-  getClimbs(id: number, name?: string): void {
+  getClimbByArea(id: number, name?: string): void {
     this.rstApiService.getClimbsByArea(id).subscribe({
       next: resp => {
         if (resp.length === 0) {
-          this.notifierService.notify('default', 'looks like this area doesn\'t have any climbs yet')
+          this.notifierService.notify('default', 'looks like this area doesn\'t have any climbs yet');
         } else {
           if (name) {
-            this.updateBreadcrumbs({ action: 'push', value: { id, name } })
+            this.updateBreadcrumbs({ action: 'push', value: { id, name } });
           }
           this.areaResults = [];
           this.climbResults = resp.map((result: any) => {
-            const { name, id } = result;
-            const grade = this.globalsService.translateGrade(result.grade);
+            const { name, id, area } = result;
             return {
               name,
-              grade,
-              id
+              grade: this.globalsService.translateGrade(result.grade),
+              id,
+              area
             }
           });
         }
@@ -125,13 +133,50 @@ export class ClimbsComponent implements OnInit {
     });
   }
 
+  getClimbsByName(name: string): void {
+    this.rstApiService.getClimbsByName(name).subscribe(({
+      next: (resp) => {
+        this.breadcrumbs = [];
+        this.areaResults = [];
+        this.climbResults = resp.map((climb: any) => {
+          return {
+            ...climb,
+            grade: this.globalsService.translateGrade(climb.grade)
+          }
+        });
+      },
+      error: () => {
+       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
+      }
+    }))
+  }
+
+  getClimbsAndAreas(id: number, name?: string): void {
+    forkJoin({
+      climbs: this.rstApiService.getClimbsByArea(id),
+      areas: this.rstApiService.getAllAreaChildren(id)
+    }).subscribe({
+      next: (responses) => {
+        if (name) {
+          this.updateBreadcrumbs({ action: 'push', value: { id, name } });
+        }
+        const { climbs, areas } = responses;
+        this.areaResults = [...areas];
+        this.climbResults = [...climbs]; 
+      },
+      error: () => {
+       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
+      }
+    })
+  }
+
   onBreadcrumbClick(id: number): void {
     if (this.breadcrumbs[this.breadcrumbs.length - 1].id === id) {
       this.notifierService.notify('default', 'this area is already selected');
       return;
     }
     this.climbResults = [];
-    this.searchChildren(id);
+    this.getClimbsAndAreas(id);
     while(this.breadcrumbs[this.breadcrumbs.length -1].id !== id) {
       this.breadcrumbs.pop();
     }

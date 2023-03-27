@@ -6,7 +6,7 @@ table
     border-radius: 4px
     width: 100%
     color: styles.$secondary-color
-    
+
 th
     text-align: left
 
@@ -18,15 +18,32 @@ td
 tr:hover
     cursor: pointer
 
-.area-loader
+.loader-container
     position: absolute
-    top: -24px
-    right: 248px
+    width: 100%
+    height: 30px
+    display: flex
+    justify-content: flex-end
+    bottom: 10px
+
+.area-loader
+    border: 4px solid styles.$tertiary-color
+    border-top: 4px solid styles.$primary-color
+    border-radius: 50%
+    width: 18px
+    height: 18px
+    animation: spin 1s linear infinite
+
+@keyframes spin
+    0%
+        transform: rotate(0deg)
+    100%
+        transform: rotate(360deg)
 
 .search-bar
     width: 40%
     @media screen and (max-width: styles.$screen-md)
         width: 70%
 
-.primary-table-column  
+.primary-table-column
     white-space: nowrap

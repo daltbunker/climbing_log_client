@@ -4,10 +4,14 @@
     </ul>
 </div>
 <div class="dropdown sm-md">
-    <button (click)="toggleDates()">Select Month</button>
-    <ul *ngIf="showDates">
-        <li (click)="scrollToBlog(date)" *ngFor="let date of dates" [value]="date.time">{{date.month}} - {{date.year}}</li>
-    </ul>
-</div>
+    <button mat-button [matMenuTriggerFor]="menu" class="menu-btn">
+        Select Month
+    </button>
+    <mat-menu #menu="matMenu">
+        <div class="vertical-stack">
+            <div class="menu-item" (click)="scrollToBlog(date)" *ngFor="let date of dates" (click)="scrollToBlog(date)">{{date.month}} {{date.year}}</div> 
+        </div>
+    </mat-menu>
+</div> 
 <div (click)="toggleDates()" *ngIf="showDates" class="close-dropdown">
 </div>

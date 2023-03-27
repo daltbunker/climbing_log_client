@@ -8,7 +8,7 @@
             </div>
         </div>
       <app-climb-table [headers]="['name']" [data]="areaResults" (tableEvent)="onTableEvent($event)"></app-climb-table>
-      <app-climb-table [headers]="['name', 'grade']" [data]="climbResults" (tableEvent)="onTableEvent($event)"></app-climb-table>
+      <app-climb-table [headers]="['name', 'grade', 'area']" [data]="climbResults" (tableEvent)="onTableEvent($event)"></app-climb-table>
     </div>
   </div>
   <ng-container *ngIf="loggedIn && role === 'ADMIN'">

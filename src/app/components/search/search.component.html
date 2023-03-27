@@ -1,7 +1,10 @@
-<div>
+<div class="search-container">
     <form [formGroup]="searchForm">
         <div class="vertical-stack" style="position: relative;">
             <mat-form-field (keydown.enter)="onSearchEnter()"  class="search-bar" appearance="fill">
+                <div *ngIf="loading" class="loader-container">
+                    <div class="area-loader"></div>
+                </div>
                 <mat-label>Search</mat-label>
                 <input type="text"
                     placeholder="Search for sectors, areas, or climbs"
@@ -10,14 +13,14 @@
                     formControlName="searchControl"
                     [matAutocomplete]="auto">
                 <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"> 
-                    <mat-option *ngFor="let result of dropdownResults" [value]="result.name" (click)="onDropdownSelect(result)">
-                        {{result.name}} <span style="color: #adadad">{{result.pathForDisplay}}</span>
+                    <mat-option *ngFor="let result of dropdownResults" [value]="result.name || result" (click)="onDropdownSelect(result)">
+                        <ng-container *ngIf="result.name; else climbName">
+                            {{result.name}} <span style="color: #adadad">{{result.pathForDisplay}}</span>
+                        </ng-container>
+                        <ng-template #climbName>{{result}}</ng-template>
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <div *ngIf="loadingAreas" class="area-loader">
-                <mat-spinner style="transform: scale(0.2)"></mat-spinner>
-            </div>
         </div>
     </form>
 </div>
