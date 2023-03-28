@@ -30,25 +30,25 @@ export class RstApiService {
   }
   // Climbs
   getAllClimbs(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs'); 
+    return this.http.get<any>(this.apiUrl + '/api/climb'); 
   }
 
   // TODO join this request with the one below and the one above
   getClimbsByArea(id: number): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs?area_id=' + id);
+    return this.http.get<any>(this.apiUrl + '/api/climb?area_id=' + id);
   } 
 
   getClimbsByName(name: string): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs?name=' + name)
+    return this.http.get<any>(this.apiUrl + '/api/climb?name=' + name)
   }
 
   getClimbNames(query: string): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/climbs/names?query=' + query)
+    return this.http.get<any>(this.apiUrl + '/api/climb/names?query=' + query)
   }
 
   addClimb(climb: any): Observable<any> {
     return this.http.post<any>(
-      this.apiUrl + '/api/climbs',
+      this.apiUrl + '/api/climb',
       climb,
       { headers: this.contentTypeHeaders }
     )
@@ -57,7 +57,7 @@ export class RstApiService {
   // Ascents
   addAscent(ascent: any, climbId: number): Observable<any> {
     return this.http.post<any>(
-      this.apiUrl + '/api/ascents?climb=' + climbId + '&user=' + this.authService.getUsername(),
+      this.apiUrl + '/api/ascent?climb=' + climbId + '&user=' + this.authService.getUsername(),
       ascent,
       { headers: this.contentTypeHeaders }
     )
@@ -65,13 +65,13 @@ export class RstApiService {
 
   updateAscent(ascent: any, id: number): Observable<any> {
     return this.http.put<any>(
-      this.apiUrl + `/api/ascents/${id}`,
+      this.apiUrl + `/api/ascent/${id}`,
       ascent,
       { headers: this.contentTypeHeaders });
   }
 
   getUserAscents(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + '/api/ascents?user=' + this.authService.getUsername());
+    return this.http.get<any>(this.apiUrl + '/api/ascent?user=' + this.authService.getUsername());
   }
 
   // Blog
