@@ -29,7 +29,7 @@ export class NavbarComponent implements OnInit {
       width: '400px',
       minHeight: '300px',
       position: {top: '10vh'}
-    })
+    });
   }
 
   logout(): void {

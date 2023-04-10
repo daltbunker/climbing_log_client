@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NotifierService } from 'angular-notifier';
+import { LoaderService } from 'src/app/services/loader.service';
 import { RstApiService } from 'src/app/services/rst-api.service';
 
 @Component({
@@ -35,7 +36,8 @@ export class ClimbFormComponent implements OnInit {
   constructor(
     private rstApiService: RstApiService,
     private notifierService: NotifierService,
-    private dialogRef: MatDialogRef<ClimbFormComponent>) { }
+    private dialogRef: MatDialogRef<ClimbFormComponent>,
+    private loaderService: LoaderService) { }
 
   ngOnInit(): void {
     this.setCountries();
@@ -55,16 +57,14 @@ export class ClimbFormComponent implements OnInit {
   }
 
   setCountries(): void {
-    this.rstApiService.getCountries()
-      .subscribe({
-        next: resp => {
-          this.countries = resp;
-          this.climbForm.controls.countryControl.setValue(this.countries[0]);
-        },
-        error: () => {
-          this.notifierService.notify('default', 'sorry, there seems to be an error. please try again later')
-        }
-      });
+    this.loaderService.startLoading();
+    this.rstApiService.getCountries().subscribe({
+      next: (resp) => {
+        this.loaderService.stopLoading();
+        this.countries = resp;
+        this.climbForm.controls.countryControl.setValue(this.countries[0]);
+      },
+    });
   }
 
   findAreas(area: string): void {
@@ -122,16 +122,15 @@ export class ClimbFormComponent implements OnInit {
   }
 
   addClimb(climb: any): void {
+    this.loaderService.startLoading();
     this.rstApiService.addClimb(climb)
       .subscribe({
         next: () => {
+          this.loaderService.stopLoading();
           this.notifierService.notify('default', 'Climb added!');
           this.dialogRef.close();
-        },
-        error: () => {
-          this.notifierService.notify('default', 'Sorry, something went wrong :(');
-      }
-      })
+        }
+      });
   }
 
   setPath(path: any[]): void {

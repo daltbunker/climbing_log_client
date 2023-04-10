@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../services/auth.service';
 import { NotifierService } from 'angular-notifier' 
+import { LoaderService } from '../services/loader.service';
 
 @Component({
   selector: 'app-login',
@@ -21,11 +22,15 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private dialogRef: MatDialogRef<LoginComponent>,
-    private notifierService: NotifierService
+    private notifierService: NotifierService,
+    private loaderService: LoaderService
   ) { }
 
   ngOnInit(): void {
-      this.newUser = false;
+    // setTimeout(() => {
+    //   this.loginExistingUser('jonnyX', 'jonnyX')
+    // }, 3000)
+    this.newUser = false;
   }
 
   onLogin(): void {
@@ -41,9 +46,11 @@ export class LoginComponent implements OnInit {
   }
 
   loginExistingUser(username: string, password: string): void {
+    this.loaderService.startLoading();
     this.authService.login(username, password)
       .subscribe({
-        next: (resp: { token: string, expiration: string, username: string, role: string }) => {
+        next: (resp: { token: string, expiration: any, username: string, role: string }) => {
+          this.loaderService.stopLoading();
           if (resp.token.length > 0) {
             this.dialogRef.close();
             this.notifierService.notify('default', `Welcome, ${resp.username}!`)
@@ -51,17 +58,16 @@ export class LoginComponent implements OnInit {
           } else {
             this.notifierService.notify('default', 'failed to authenticate')
           }
-        },
-        error: () => {
-          this.notifierService.notify('default', 'username or password is incorrect')
         }
       })
   }
 
   loginNewUser(username: string, password: string): void {
+    this.loaderService.startLoading();
     this.authService.signup(username, password)
       .subscribe({
         next: (resp: { token: string, expiration: string, username: string, role: string }) => {
+          this.loaderService.stopLoading();
           if (resp.token.length > 0) {
             this.dialogRef.close();
             this.notifierService.notify('default', `Welcome, ${resp.username}!`);
@@ -69,9 +75,6 @@ export class LoginComponent implements OnInit {
           } else {
             this.notifierService.notify('default', 'failed to authenticate')
           }
-        },
-        error: () => {
-          this.notifierService.notify('default', 'failed to create account');
         }
       })
   }

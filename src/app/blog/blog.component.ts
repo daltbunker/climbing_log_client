@@ -66,7 +66,6 @@ export class BlogComponent implements OnInit {
         },
         error: () => {
           this.notFound = true;
-          this.loaderService.stopLoading();
         }
       })
   }
@@ -77,9 +76,6 @@ export class BlogComponent implements OnInit {
         .subscribe({
           next: () => {
             this.likedByUser = false;
-          },
-          error: () => {
-            console.warn('failed to remove like')
           }
         })
     } else {
@@ -87,9 +83,6 @@ export class BlogComponent implements OnInit {
         .subscribe({
           next: () => {
             this.likedByUser = true; 
-          },
-          error: () => {
-            console.warn('failed to save like')
           }
         });
     }

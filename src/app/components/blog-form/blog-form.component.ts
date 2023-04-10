@@ -3,6 +3,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { RstApiService } from 'src/app/services/rst-api.service';
 import { NotifierService } from 'angular-notifier';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-blog-form',
@@ -24,7 +25,8 @@ export class BlogFormComponent implements OnInit {
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<BlogFormComponent>,
     private rstApiService: RstApiService,
-    private notifierService: NotifierService) { }
+    private notifierService: NotifierService,
+    private loaderService: LoaderService) { }
 
   ngOnInit(): void {
     if (this.data.formType = 'edit') {
@@ -65,13 +67,11 @@ export class BlogFormComponent implements OnInit {
       title: this.blogForm.get('title')?.value
     }
     if (blog.body && blog.title) {
+      this.loaderService.startLoading();
       this.rstApiService.addBlog(blog)
         .subscribe({
           next: resp => {
             this.saveBlogImage(this.image, resp.id);
-          },
-          error: () => {
-            this.notifierService.notify('default', 'failed to save blog');
           }
         });
     }
@@ -83,18 +83,17 @@ export class BlogFormComponent implements OnInit {
       body: this.blogForm.get('body')?.value
     }
     if (blog.title && blog.body && this.data.id) {
+      this.loaderService.startLoading();
       this.rstApiService.updateBlog(blog, this.data.id)
         .subscribe({
           next: resp => {
             if (this.image) {
               this.saveBlogImage(this.image, resp.id);
             } else {
-              this.notifierService.notify('default', 'Blog Added Succesfully');
+              this.loaderService.stopLoading();
               this.dialogRef.close({event: 'success'});
+              this.notifierService.notify('default', 'Blog Saved Succesfully');
             }
-          },
-          error: () => {
-            this.notifierService.notify('default', 'failed to save blog');
           }
         });
     } else {
@@ -110,10 +109,7 @@ export class BlogFormComponent implements OnInit {
         next: () => {
           this.notifierService.notify('default', 'Blog Added Succesfully');
           this.dialogRef.close({event: 'success'});
-        },
-        error: () => {
-          // TODO: change form to update mode
-          this.notifierService.notify('default', 'failed to save image');
+          this.loaderService.stopLoading();
         }
       });
       

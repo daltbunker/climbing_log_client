@@ -45,22 +45,19 @@ export class MyClimbsComponent implements OnInit {
         next: (resp: any[]) => {
           if (resp.length < 1) {
             this.noAscents = true;
+          } else {
+            this.climbs = resp.map(ascent => {
+              return {
+                name: ascent.name,
+                attempts: this.mapAttempt(ascent.attempts),
+                date: new Date(ascent.date).toLocaleDateString(),
+                comment: ascent.comment,
+                ascentId: ascent.id
+              }
+            })
+            this.climbKeys = Object.keys(this.climbs[0]);
+            this.climbKeys.pop();
           }
-          this.climbs = resp.map(ascent => {
-            return {
-              name: ascent.name,
-              attempts: this.mapAttempt(ascent.attempts),
-              date: new Date(ascent.date).toLocaleDateString(),
-              comment: ascent.comment,
-              ascentId: ascent.id
-            }
-          })
-          this.climbKeys = Object.keys(this.climbs[0]);
-          this.climbKeys.pop();
-          this.loaderService.stopLoading();
-        },
-        error: () => {
-          this.notifierService.notify('deafult', 'Failed to load ascents :(')
           this.loaderService.stopLoading();
         }
       });

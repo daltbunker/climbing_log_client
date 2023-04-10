@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { NotifierService } from 'angular-notifier';
+import { LoaderService } from 'src/app/services/loader.service';
 import { RstApiService } from 'src/app/services/rst-api.service';
 
 @Component({
@@ -22,7 +22,7 @@ export class CommentsComponent implements OnInit {
 
   constructor(
     private rstApiService: RstApiService,
-    private notifierService: NotifierService) { }
+    private loaderService: LoaderService) { }
 
   ngOnInit(): void {
   }
@@ -34,15 +34,14 @@ export class CommentsComponent implements OnInit {
   submitComment(): void {
     const commentText = this.commentForm.get('text')?.value;
     if (commentText) {
+      this.loaderService.startLoading();
       this.rstApiService.addComment(this.blogId, { text: commentText })
         .subscribe({
           next: (comment) => {
+            this.loaderService.stopLoading();
             this.commentForm.reset();
             this.comments.push(comment);
             this.toggleReply(false);
-          },
-          error: () => {
-            this.notifierService.notify('default', 'failed to save comment')
           }
         })
     }

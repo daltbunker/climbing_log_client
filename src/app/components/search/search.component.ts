@@ -78,7 +78,6 @@ export class SearchComponent implements OnInit {
         },
         error: () => {
           this.loading = false;
-          this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
         }
       })
     }, 1000)

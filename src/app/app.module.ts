@@ -23,7 +23,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ClimbFormComponent } from './components/climb-form/climb-form.component';
 import { AscentFormComponent } from './components/ascent-form/ascent-form.component';
@@ -90,7 +90,7 @@ import { ClimbTableComponent } from './components/climb-table/climb-table.compon
       },
       theme: 'material',
       behaviour: {
-        autoHide: 2500
+        autoHide: 4000
       }
     })
   ],

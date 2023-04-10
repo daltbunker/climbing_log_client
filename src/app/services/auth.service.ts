@@ -32,22 +32,19 @@ export class AuthService {
   }
 
   updateLoginState(): void {
-    const expiration = localStorage.getItem('expiration')
-    if (expiration) {
-      const expirationTime = new Date(expiration).getTime();
-      const currentTime = new Date().getTime();
-      if (expirationTime > currentTime) {
+    const expiration = parseInt(localStorage.getItem('expiration') || '0');
+    if (expiration > new Date().getTime()) {
         this.loggedIn.next(true);
         return;
-      } 
     }
     this.loggedIn.next(false);
   }
 
   setSession(authResult: { token: string, expiration: string, username: string, role: string }) {
+    const expirationInMilliseconds = new Date(authResult.expiration).getTime();
     localStorage.setItem('role', authResult.role)
     localStorage.setItem('token_id', authResult.token);
-    localStorage.setItem('expiration', authResult.expiration);
+    localStorage.setItem('expiration', expirationInMilliseconds.toString());
     localStorage.setItem('username', authResult.username);
     this.loggedIn.next(true);
   }    

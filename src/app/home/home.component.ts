@@ -52,10 +52,6 @@ export class HomeComponent implements OnInit {
           this.blogs = resp;
           this.sortBlogsAndDates();
           this.loaderService.stopLoading();
-        },
-        error: () => {
-          this.notifierService.notify('default', 'Failed to load blogs :(');
-          this.loaderService.stopLoading();
         }
       })
   }

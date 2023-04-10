@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RstApiService } from 'src/app/services/rst-api.service';
 import { NotifierService } from 'angular-notifier';
+import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
   selector: 'app-ascent-form',
@@ -20,7 +21,8 @@ export class AscentFormComponent implements OnInit {
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private rstApiService: RstApiService,
-    private notifierService: NotifierService) { }
+    private notifierService: NotifierService,
+    private loaderService: LoaderService) { }
 
   ngOnInit(): void {
     if (this.data.formType === 'edit') {
@@ -49,14 +51,13 @@ export class AscentFormComponent implements OnInit {
 
   logAscent(ascent: any): void {
     if (this.data.id) {
+      this.loaderService.startLoading();
       this.rstApiService.addAscent(ascent, this.data.id)
         .subscribe({
           next: () => {
+            this.loaderService.stopLoading();
             this.notifierService.notify('default', 'Ascent added!');
             this.data.submitLogEmitter.emit(true);
-          },
-          error: () => {
-            this.notifierService.notify('default', 'Sorry, something went wrong :(');
           }
         });
     }
@@ -64,14 +65,13 @@ export class AscentFormComponent implements OnInit {
 
   saveAscent(ascent: any): void {
     if (this.data.ascentId) {
+      this.loaderService.startLoading();
       this.rstApiService.updateAscent(ascent, this.data.ascentId)
         .subscribe({
           next: () => {
+            this.loaderService.stopLoading();
             this.notifierService.notify('default', 'Ascent updated!');
             this.data.submitLogEmitter.emit(true);
-          },
-          error: () => {
-            this.notifierService.notify('default', 'failed to save ascent')
           }
         })
     }

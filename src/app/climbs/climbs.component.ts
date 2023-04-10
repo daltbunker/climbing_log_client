@@ -6,6 +6,7 @@ import { AscentFormComponent } from '../components/ascent-form/ascent-form.compo
 import { ClimbFormComponent } from '../components/climb-form/climb-form.component';
 import { AuthService } from '../services/auth.service';
 import { GlobalsService } from '../services/globals.service';
+import { LoaderService } from '../services/loader.service';
 import { RstApiService } from '../services/rst-api.service';
 
 @Component({
@@ -32,7 +33,8 @@ export class ClimbsComponent implements OnInit {
     private rstApiService: RstApiService,
     private notifierService: NotifierService,
     private authService: AuthService,
-    private globalsService: GlobalsService
+    private globalsService: GlobalsService,
+    private loaderService: LoaderService
   ) { }
 
   ngOnInit(): void {
@@ -88,8 +90,10 @@ export class ClimbsComponent implements OnInit {
   }
 
   searchChildren(id: number, name?: string): void {
+    this.loaderService.startLoading();
     this.rstApiService.getAllAreaChildren(id).subscribe({
       next: (resp) => {
+        this.loaderService.stopLoading();
         if (resp.length === 0) {
           this.notifierService.notify('default', 'looks like this area doesn\'t have any climbs yet')
         } else {
@@ -99,16 +103,15 @@ export class ClimbsComponent implements OnInit {
           this.climbResults = [];
           this.areaResults = resp;
         }
-      },
-      error: () => {
-       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
       }
     })
   }
 
   getClimbByArea(id: number, name?: string): void {
+    this.loaderService.startLoading();
     this.rstApiService.getClimbsByArea(id).subscribe({
       next: resp => {
+        this.loaderService.stopLoading();
         if (resp.length === 0) {
           this.notifierService.notify('default', 'looks like this area doesn\'t have any climbs yet');
         } else {
@@ -126,16 +129,15 @@ export class ClimbsComponent implements OnInit {
             }
           });
         }
-      },
-      error: () => {
-       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
       }
     });
   }
 
   getClimbsByName(name: string): void {
+    this.loaderService.startLoading();
     this.rstApiService.getClimbsByName(name).subscribe(({
       next: (resp) => {
+        this.loaderService.stopLoading();
         this.breadcrumbs = [];
         this.areaResults = [];
         this.climbResults = resp.map((climb: any) => {
@@ -144,28 +146,25 @@ export class ClimbsComponent implements OnInit {
             grade: this.globalsService.translateGrade(climb.grade)
           }
         });
-      },
-      error: () => {
-       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
       }
     }))
   }
 
   getClimbsAndAreas(id: number, name?: string): void {
+    console.log('start loading')
+    this.loaderService.startLoading();
     forkJoin({
       climbs: this.rstApiService.getClimbsByArea(id),
       areas: this.rstApiService.getAllAreaChildren(id)
     }).subscribe({
       next: (responses) => {
+        this.loaderService.stopLoading();
         if (name) {
           this.updateBreadcrumbs({ action: 'push', value: { id, name } });
         }
         const { climbs, areas } = responses;
         this.areaResults = [...areas];
         this.climbResults = [...climbs]; 
-      },
-      error: () => {
-       this.notifierService.notify('default', 'sorry something went wront, please try again later.') 
       }
     })
   }
