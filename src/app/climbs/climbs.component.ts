@@ -151,7 +151,6 @@ export class ClimbsComponent implements OnInit {
   }
 
   getClimbsAndAreas(id: number, name?: string): void {
-    console.log('start loading')
     this.loaderService.startLoading();
     forkJoin({
       climbs: this.rstApiService.getClimbsByArea(id),
