@@ -62,11 +62,16 @@ export class ClimbFormComponent implements OnInit {
       next: (resp) => {
         this.loaderService.stopLoading();
         this.countries = resp;
-        this.climbForm.controls.countryControl.setValue(this.countries[0]);
+        this.setCountryControl('united states');
       },
     });
   }
 
+  setCountryControl(country: string) {
+    const indexOfCountry = this.countries.map(country => country.name).indexOf(country);
+    this.climbForm.controls.countryControl.setValue(this.countries[indexOfCountry]);
+  }
+ 
   findAreas(area: string): void {
     this.loadingArea = true;
     if (this.areaSearchTimeout) {
@@ -106,6 +111,10 @@ export class ClimbFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const areaValue = this.climbForm.value.areaControl; 
+    if (areaValue?.length && confirm(`Would you like "${areaValue}" to be included in the area?`)) {
+      this.path.push(areaValue);
+    } 
     if (this.path.length === 0 && this.areaElementRef) {
       this.areaElementRef.nativeElement.focus();
       this.climbForm.controls.areaControl.setErrors({'incorrect': true});
@@ -115,7 +124,7 @@ export class ClimbFormComponent implements OnInit {
         name: this.climbForm.value.nameControl,
         grade: this.climbForm.value.gradeControl,
         countryId: this.climbForm.value.countryControl?.id,
-        path: this.path.slice(1,)
+        path: this.path
       }
       this.addClimb(climb);
     }
@@ -134,6 +143,8 @@ export class ClimbFormComponent implements OnInit {
   }
 
   setPath(path: any[]): void {
+    const country = path.shift();
+    this.setCountryControl(country.name);
     this.path = path;
   }
 
