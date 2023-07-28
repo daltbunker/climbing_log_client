@@ -24,13 +24,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ClimbFormComponent } from './components/climb-form/climb-form.component';
 import { AscentFormComponent } from './components/ascent-form/ascent-form.component';
 import { BlogComponent } from './blog/blog.component';
 import { BlogFormComponent } from './components/blog-form/blog-form.component';
 import { AuthInterceptor } from './services/auth-interceptor';
-import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { NotifierModule } from 'angular-notifier';
 import { SuggestedAreasComponent } from './components/suggested-areas/suggested-areas.component';
 import { CommentsComponent } from './components/comments/comments.component';
@@ -73,11 +73,11 @@ import { ClimbTableComponent } from './components/climb-table/climb-table.compon
     MatSelectModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatMenuModule,
     MatButtonToggleModule,
     ReactiveFormsModule,
     MatIconModule,
-    LazyLoadImageModule,
     QuillModule.forRoot(),
     NotifierModule.withConfig({
       position: {

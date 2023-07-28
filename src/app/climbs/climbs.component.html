@@ -1,6 +1,6 @@
 <div class="climbs-container">
   <app-search (onSearch)="onSearch($event)" (updateBreadcrumbs)="updateBreadcrumbs($event)"></app-search>
-  <div class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;">
+  <div *ngIf="areaResults.length > 0 || climbResults.length > 0" class="vertical-stack" style="margin-top: 50px; min-height: 100vh; justify-content: flex-start;">
     <div style="width: 80%;">
       <div class="vertical-stack" style="align-items: flex-start;">
             <div class="breadcrumb" style="margin-left: 10px;" *ngIf="true">
