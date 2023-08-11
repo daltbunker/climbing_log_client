@@ -3,7 +3,10 @@
       <th *ngFor="let header of headers" >{{header}}</th>
       <tr *ngFor="let row of data" (click)="onRowClick(row)">
           <td *ngFor="let header of headers" class="primary-table-column" >
-            {{row[header]}}
+            <div class="grade-box" [style]="{'background-color': row[header]}" *ngIf="header === 'grade'"></div>
+            <ng-container *ngIf="header !== 'grade'">
+              {{row[header]}}
+            </ng-container>
           </td>
       </tr>
     </table>

@@ -5,7 +5,6 @@ import { forkJoin } from 'rxjs';
 import { AscentFormComponent } from '../components/ascent-form/ascent-form.component';
 import { ClimbFormComponent } from '../components/climb-form/climb-form.component';
 import { AuthService } from '../services/auth.service';
-import { GlobalsService } from '../services/globals.service';
 import { LoaderService } from '../services/loader.service';
 import { RstApiService } from '../services/rst-api.service';
 
@@ -26,6 +25,7 @@ export class ClimbsComponent implements OnInit {
 
   private climbDialogRef: MatDialogRef<ClimbFormComponent, any> | undefined;
   private ascentDialogRef: MatDialogRef<AscentFormComponent, any> | undefined;
+  private lastSearch = { value: undefined };
   
 
   constructor(
@@ -33,7 +33,6 @@ export class ClimbsComponent implements OnInit {
     private rstApiService: RstApiService,
     private notifierService: NotifierService,
     private authService: AuthService,
-    private globalsService: GlobalsService,
     private loaderService: LoaderService
   ) { }
 
@@ -47,6 +46,11 @@ export class ClimbsComponent implements OnInit {
 
     this.submitLogEmitter.subscribe(event => {
       if (event && this.ascentDialogRef) {
+        if (this.breadcrumbs.length > 0) {
+          this.refreshFromBreadcrumb();
+        } else {
+          this.onSearch(this.lastSearch);
+        }
         this.ascentDialogRef.close();
       } else {
         console.warn('failed to close ascent form');
@@ -55,12 +59,12 @@ export class ClimbsComponent implements OnInit {
   }
 
   onSearch(event: { value :any }): void {
+    this.lastSearch = event;
     if (typeof event.value === 'string') {
       this.getClimbsByName(event.value);
     } else if (event.value.climbCount > 0 && event.value.childrenCount > 0) {
       this.getClimbsAndAreas(event.value.id); 
-    }
-    else if (event.value.climbCount > 0) {
+    } else if (event.value.climbCount > 0) {
       this.getClimbByArea(event.value.id)
     } else {
       this.searchChildren(event.value.id);
@@ -119,15 +123,7 @@ export class ClimbsComponent implements OnInit {
             this.updateBreadcrumbs({ action: 'push', value: { id, name } });
           }
           this.areaResults = [];
-          this.climbResults = resp.map((result: any) => {
-            const { name, id, area } = result;
-            return {
-              name,
-              grade: this.globalsService.translateGrade(result.grade),
-              id,
-              area
-            }
-          });
+          this.climbResults = resp;
         }
       }
     });
@@ -140,12 +136,7 @@ export class ClimbsComponent implements OnInit {
         this.loaderService.stopLoading();
         this.breadcrumbs = [];
         this.areaResults = [];
-        this.climbResults = resp.map((climb: any) => {
-          return {
-            ...climb,
-            grade: this.globalsService.translateGrade(climb.grade)
-          }
-        });
+        this.climbResults = resp;
       }
     }))
   }
@@ -168,6 +159,12 @@ export class ClimbsComponent implements OnInit {
     })
   }
 
+  refreshFromBreadcrumb(): void {
+    const id = this.breadcrumbs[this.breadcrumbs.length - 1].id;
+    this.climbResults = [];
+    this.getClimbsAndAreas(id);
+  }
+
   onBreadcrumbClick(id: number): void {
     if (this.breadcrumbs[this.breadcrumbs.length - 1].id === id) {
       this.notifierService.notify('default', 'this area is already selected');
@@ -186,7 +183,7 @@ export class ClimbsComponent implements OnInit {
         this.breadcrumbs.push(event.value);
         break;
       case 'update':
-        this.breadcrumbs = event.value;
+        this.breadcrumbs = [...event.value];
     }
   }
 
@@ -199,7 +196,7 @@ export class ClimbsComponent implements OnInit {
         data: { ...climb, submitLogEmitter: this.submitLogEmitter, formType: 'new' }
       })
     } else {
-      this.notifierService.notify('default', 'You must be logged in to add an ascent.');
+        this.notifierService.notify('default', 'You must be logged in to add an ascent.');
     }
   }
 

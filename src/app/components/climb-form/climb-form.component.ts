@@ -15,15 +15,11 @@ export class ClimbFormComponent implements OnInit {
   @ViewChild('area') areaElementRef: ElementRef | undefined;
   public countries: any[] = [];
   public path: any[] = [];
-  public boulders = BOULDERS;
-  public routes = ROUTES;
-  public showVGrades = false;
   public climbForm = new FormGroup({
     typeControl: new FormControl('route'),
     nameControl: new FormControl(''),
     countryControl: new FormControl({id: 0, name: ''}),
     areaControl: new FormControl(''),
-    gradeControl: new FormControl('')
   });
   private oldFormState = {
     country: {id: 0, name: ''},
@@ -42,9 +38,6 @@ export class ClimbFormComponent implements OnInit {
   ngOnInit(): void {
     this.setCountries();
     this.climbForm.valueChanges.subscribe(event => {
-      if (event.typeControl) {
-        this.showVGrades = event.typeControl === 'boulder';
-      }
       if (event.countryControl && event.countryControl.id !== this.oldFormState.country.id) {
         this.oldFormState.country = {...event.countryControl};
         this.path = [];
@@ -122,7 +115,6 @@ export class ClimbFormComponent implements OnInit {
       const climb = {
         type: this.climbForm.value.typeControl,
         name: this.climbForm.value.nameControl,
-        grade: this.climbForm.value.gradeControl,
         countryId: this.climbForm.value.countryControl?.id,
         path: this.path
       }
@@ -166,56 +158,3 @@ export class ClimbFormComponent implements OnInit {
   }
 
 }
-
-const BOULDERS = [
-  'V0',
-  'V1',
-  'V2',
-  'V3',
-  'V4',
-  'V5',
-  'V6',
-  'V7',
-  'V8',
-  'V9',
-  'V10',
-  'V11',
-  'V12',
-  'V13',
-  'V14',
-  'V15',
-  'V16',
-  'V17'
-]
-const ROUTES = [
-  "5.4",
-  "5.5",
-  "5.6",
-  "5.7",
-  "5.8",
-  "5.9",
-  "5.10a",
-  "5.10b",
-  "5.10c",
-  "5.10d",
-  "5.11a",
-  "5.11b",
-  "5.11c",
-  "5.11d",
-  "5.12a",
-  "5.12b",
-  "5.12c",
-  "5.12d",
-  "5.13a",
-  "5.13b",
-  "5.13c",
-  "5.13d",
-  "5.14a",
-  "5.14b",
-  "5.14c",
-  "5.14d",
-  "5.15a",
-  "5.15b",
-  "5.15c",
-  "5.15d"
-]

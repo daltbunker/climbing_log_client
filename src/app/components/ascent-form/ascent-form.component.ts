@@ -15,7 +15,8 @@ export class AscentFormComponent implements OnInit {
   public ascentForm = new FormGroup({
     dateControl: new FormControl(new Date()),
     attemptsControl: new FormControl(''),
-    commentControl: new FormControl('')
+    commentControl: new FormControl(''),
+    gradeControl: new FormControl('#44a3e6')
   });
 
   constructor(
@@ -29,8 +30,13 @@ export class AscentFormComponent implements OnInit {
       this.ascentForm.setValue({
         dateControl: new Date(this.data.date),
         attemptsControl: this.mapAttempt(this.data.attempts),
-        commentControl: this.data.comment
+        commentControl: this.data.comment,
+        gradeControl: this.data.grade
       });
+    } else {
+      this.ascentForm.patchValue({
+        gradeControl: this.data.grade
+      })
     }
   }
 
@@ -40,6 +46,7 @@ export class AscentFormComponent implements OnInit {
         attempts: this.ascentForm.value.attemptsControl,
         date: this.ascentForm.value.dateControl,
         comment: this.ascentForm.value.commentControl,
+        grade: this.ascentForm.value.gradeControl
       }
       if (this.data.formType === 'edit') {
         this.saveAscent(ascent);
@@ -54,10 +61,10 @@ export class AscentFormComponent implements OnInit {
       this.loaderService.startLoading();
       this.rstApiService.addAscent(ascent, this.data.id)
         .subscribe({
-          next: () => {
+          next: data => {
             this.loaderService.stopLoading();
             this.notifierService.notify('default', 'Ascent added!');
-            this.data.submitLogEmitter.emit(true);
+            this.data.submitLogEmitter.emit(data);
           }
         });
     }
