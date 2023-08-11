@@ -6,14 +6,20 @@
         </tr>
         <tr *ngFor="let climb of climbs" (click)="openLogModal(climb)">
             <td *ngFor="let key of climbKeys" class="primary-table-column">
+              <div class="grade-box" [style]="{'background-color': climb[key]}" *ngIf="key === 'grade'"></div>
+              <ng-container *ngIf="key !== 'grade'">
                 {{climb[key]}}
+              </ng-container>
             </td>
         </tr>
     </table>
     <div class="sm">
       <div *ngFor="let climb of climbs" class="sm-result-container" (click)="openLogModal(climb)">
           <div *ngFor="let key of climbKeys">
-              <span>{{key}}:</span> {{climb[key]}}
+              <div class="grade-box" [style]="{'background-color': climb[key]}" *ngIf="key === 'grade'"></div>
+              <ng-container *ngIf="key !== 'grade'">
+                <span>{{key}}:</span> {{climb[key]}}
+              </ng-container>
           </div>
       </div>
     </div>

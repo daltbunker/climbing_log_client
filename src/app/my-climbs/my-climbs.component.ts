@@ -52,8 +52,8 @@ export class MyClimbsComponent implements OnInit {
                 attempts: this.mapAttempt(ascent.attempts),
                 date: new Date(ascent.date).toLocaleDateString(),
                 comment: ascent.comment,
-                ascentId: ascent.id,
-                grade: ascent.grade
+                grade: ascent.grade,
+                ascentId: ascent.id
               }
             })
             this.climbKeys = Object.keys(this.climbs[0]);
