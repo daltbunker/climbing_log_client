@@ -16,7 +16,8 @@ export class AscentFormComponent implements OnInit {
     dateControl: new FormControl(new Date()),
     attemptsControl: new FormControl(''),
     commentControl: new FormControl(''),
-    gradeControl: new FormControl('#44a3e6')
+    gradeControl: new FormControl('#44a3e6'),
+    weightControl: new FormControl('')
   });
 
   constructor(
@@ -31,7 +32,8 @@ export class AscentFormComponent implements OnInit {
         dateControl: new Date(this.data.date),
         attemptsControl: this.mapAttempt(this.data.attempts),
         commentControl: this.data.comment,
-        gradeControl: this.data.grade
+        gradeControl: this.data.grade,
+        weightControl: this.data["over 200 lbs"] === "yes" ? "over200lbs" : "under200lbs"
       });
     } else {
       this.ascentForm.patchValue({
@@ -46,7 +48,8 @@ export class AscentFormComponent implements OnInit {
         attempts: this.ascentForm.value.attemptsControl,
         date: this.ascentForm.value.dateControl,
         comment: this.ascentForm.value.commentControl,
-        grade: this.ascentForm.value.gradeControl
+        grade: this.ascentForm.value.gradeControl,
+        over200lbs: this.ascentForm.value.weightControl === "over200lbs" ? true : false
       }
       if (this.data.formType === 'edit') {
         this.saveAscent(ascent);

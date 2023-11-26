@@ -53,6 +53,7 @@ export class MyClimbsComponent implements OnInit {
                 date: new Date(ascent.date).toLocaleDateString(),
                 comment: ascent.comment,
                 grade: ascent.grade,
+                'over 200 lbs': ascent.over200lbs ? "yes" : "no",
                 ascentId: ascent.id
               }
             })

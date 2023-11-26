@@ -23,6 +23,13 @@
             <input type="color" matInput formControlName="gradeControl">
           </mat-form-field>
           <mat-form-field appearance="fill">
+            <mat-label>Weight</mat-label>
+            <mat-select formControlName="weightControl" required>
+              <mat-option value="over200lbs">over 200 lbs</mat-option>
+              <mat-option value="under200lbs">under 200 lbs</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>Comment</mat-label>
             <textarea style="height: 100px" matInput formControlName="commentControl"></textarea>
           </mat-form-field>
