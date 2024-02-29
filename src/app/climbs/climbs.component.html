@@ -11,7 +11,7 @@
       <app-climb-table [headers]="['name', 'grade', 'area']" [data]="climbResults" (tableEvent)="onTableEvent($event)"></app-climb-table>
     </div>
   </div>
-  <ng-container *ngIf="loggedIn && role === 'ADMIN'">
+  <ng-container *ngIf="loggedIn">
     <button class="float-btn" (click)="openClimbForm()">Add Climb +</button>
   </ng-container>
 </div>
